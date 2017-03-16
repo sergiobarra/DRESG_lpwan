@@ -7,9 +7,9 @@ clc
 clear
 close all
 
-%% Main configuration parameters
-num_rings = 5;                      % Num of rings
-child_ratio = 3;                    % Num of children of STAs not belonging to the last ring
+%% Main configuration parameters (editable)
+num_rings = 7;                      % Num of rings of the DRESG deployment
+child_ratio = 2;                    % Num of children of STAs not belonging to the last ring
 DFS = 65;                           % Minimum packet length (Data Frame Size) [Byte]
 p_ratio = 4;                        % Max num of payloads in a DFS
 spread_model = 0;                   % Equidistant, fibonacci or reverse fibonnaci (0, 1 or 2)
@@ -20,9 +20,24 @@ transceiver_model = 1;              % Transceiver model (0: CC1100, 1: CC1200, 2
 plot_topology = 0;
 plot_ring_spread = 1;
 
+%% Fix constants (DO NOT CHANGE THIS!)
+ROUTING_MODEL_SINGLE_HOP = 0;
+ROUTING_MODEL_NEXT_RING_HOP = 1;
+RESULTS_NUM_ELEMENTS = 10;
+RESULTS_IX_ENERGY_TX = 1;           % Index of the energy consumed with optimal configuration
+RESULTS_IX_POWER_OPT = 2;           % Index of the optimal transmission power
+RESULTS_IX_POWER_LVL = 3;           % Index of the optimal transmission power level  
+RESULTS_IX_R_OPT = 4;               % Index of the optimal rate
+RESULTS_IX_R_LVL = 5;               % Index of the optimal rate level
+RESULTS_IX_ENERGY_RX = 6;           % Index of the receiving energy
+RESULTS_IX_RING_LOAD = 7;           % Index of the average number of payloads to be sent per STA
+RESULTS_IX_MAX_RING_LOAD = 8;       % Index of the maximum number of payloads to be sent per STA (when PER = 0)
+RESULTS_IX_DFS_RING_LOAD = 9;       % Index of the average number of DFS to be sent per STA
+RESULTS_IX_RING_DESTIINATION = 10;  % Index of the the destination ring
+
 %%  Load configuration parameters
 
-disp('Saving RNT configuration...')
+disp('Saving DRESG deployment and scenarion configuration...')
 
 % Packets
 L_data = 15;        % Data payload length [Byte]

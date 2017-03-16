@@ -12,7 +12,7 @@ function [ fair_optimal_conf, optimal_delta_conf ] = fair_optimal_tx_conf(aggreg
 
 load('configuration.mat')
 balanced_results = zeros(num_delta_combinations, num_rings, 10);
-disp('- progress: 0%')
+% disp('- progress: 0%')
 for delta_conf_ix = 1:num_delta_combinations
     
     % delta_combinations(delta_conf,:)
@@ -102,11 +102,11 @@ for delta_conf_ix = 1:num_delta_combinations
             end
         end
     end
-    if(delta_conf_ix == num_delta_combinations)
-        disp('- progress: 100% completed!')
+%     if(delta_conf_ix == num_delta_combinations)
+%         disp('- progress: 100% completed!')
 %     else
 %         disp(['- progress: ' num2str(delta_conf_ix*100 / num_delta_combinations) '%'])
-    end
+%     end
 end
 
 % Get optimal delta configuration

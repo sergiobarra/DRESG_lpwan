@@ -1,16 +1,17 @@
 %%% "Ring Network Topology (RNT) Framework" project (September 2016)
 %%% Author: Sergio Barrachina (sergio.barrachina@upf.edu)
 
-function [E_tx, P_opt, ix_P, r_opt, ix_r, E_rx, ring_load, max_ring_load, dfs_ring_load, ring_dest] = single_multi_optimal_tx_conf(routing_mode, ring, aggregation)
+function [E_tx, P_opt, ix_P, r_opt, ix_r, E_rx, ring_load, max_ring_load, dfs_ring_load, ring_dest] =...
+        single_multi_optimal_tx_conf(routing_mode, ring, payload_aggregation)
 % single_multi_optimal_tx_conf returns 6 parameters corresponding to the
 % optimal TX configuration (TX output power, TX rate) in terms of energy 
 % savings for the nodes in a give ring and routing mode.
 %   Arguments:
-%   - routing_mode: single-hop or multi-hop (0 or 1)
+%   - routing_mode: single-hop or next-ring-hop (0 or 1)
 %   - ring: ring of the node
-%   - aggregation: aggregation flag (0: no aggreagation, 1: aggregation)
+%   - payload_aggregation: aggregation flag (0: no aggreagation, 1: aggregation)
 %   Returned parameters:
-%   - E_tz: energy consumed with the optimal configuration
+%   - E_tx: energy consumed with the optimal configuration
 %   - P_opt: optimal transmission power
 %   - ix_P: index of the optimal power level
 %   - r_opt: optimal rate
@@ -66,12 +67,10 @@ for pow_ix = 1:length(P_LVL)
                 max_ring_load = Np;
                 
                 % Get number of DFS packets to transmit
-                if aggregation == 1
+                if payload_aggregation
                     num_dfs = get_num_dfs(Np, p_ratio);
-                elseif aggregation == 0
-                    num_dfs = Np;
                 else
-                    error('Aggregation flag unknown!')
+                    num_dfs = Np;
                 end
                 
                 ring_load = Np;
@@ -83,12 +82,10 @@ for pow_ix = 1:length(P_LVL)
                     children_subtree_size = sum(n(1:num_rings-ring));   % Payloads to be listened from each child
                     
                     % Get number of DFS packets to listen
-                    if aggregation == 1
+                    if payload_aggregation
                         num_dfs_per_child = get_num_dfs(children_subtree_size, p_ratio);
-                    elseif aggregation == 0
-                        num_dfs_per_child = children_subtree_size;
                     else
-                        error('Aggregation flag unknown!')
+                        num_dfs_per_child = children_subtree_size;
                     end
                     
                     t_rx = (child_ratio * num_dfs_per_child * DFS * 8) / r_aux;
