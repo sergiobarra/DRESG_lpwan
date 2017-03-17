@@ -39,10 +39,10 @@ RING_SPREAD_MODEL_INVERSE_FIBONACCI = 2;    % Inverse Fibonacci ring spread mode
 
 %% Main configuration parameters (EDITABLE)
 
-num_rings = 7;                     % Num of rings of the DRESG deployment (a.k.a R)
+num_rings = 7;                      % Num of rings of the DRESG deployment
 child_ratio = 3;                    % Num of children of STAs not belonging to the last ring
-spread_model = RING_SPREAD_MODEL_EQUIDISTANT;   % Equidistant, fibonacci or reverse fibonnaci
-transceiver_model = TRANSCEIVER_MODEL_CC1200;   % Transceiver model (0: CC1100, 1: CC1200, 2: si4464 (SigFox))
+spread_model = 0;                   % Equidistant, fibonacci or reverse fibonnaci (0, 1 or 2)
+transceiver_model = TRANSCEIVER_MODEL_CC1200;              % Transceiver model (0: CC1100, 1: CC1200, 2: si4464 (SigFox))
 
 L_DP = 65;                          % Fixed data packet length [Byte]
 L_payload = 15;                     % Fixed payload length [Bytes]

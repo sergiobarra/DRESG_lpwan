@@ -17,4 +17,4 @@ Just [Matlab](https://www.mathworks.com/) is required.
 You can contact me for any issue you may have when using DRESG.
 
 ### Contributing
-I am always open to new contributions :) Just drop me an email to sergio.barrachina@upf.edu
+I am always open to new contributions :) Just drop me an email at sergio.barrachina@upf.edu

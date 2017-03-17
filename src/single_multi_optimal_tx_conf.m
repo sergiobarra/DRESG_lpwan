@@ -41,7 +41,7 @@ for pow_ix = 1:length(P_LVL)
                 r_aux = R_LVL(rate_ix);
                 Np = 1; % Max number of payloads to be transmitted
                 num_dfs = Np;   % No aggregation in single-hop
-                t_tx = (num_dfs * DFS * 8) / r_aux;    % Each STA sends a DFS frame
+                t_tx = (num_dfs * L_DP * 8) / r_aux;    % Each STA sends a L_DP frame
                 E_TX(pow_ix,rate_ix) = t_tx * (I_LVL(pow_ix) * V);  % e [mJ]
                 if E_TX(pow_ix,rate_ix) < E_opt
                     P_opt = P_LVL(pow_ix);
@@ -66,7 +66,7 @@ for pow_ix = 1:length(P_LVL)
                 Np = sum(n(1:(num_rings - ring + 1)));    % Max number of payload to be txd (subtree size)
                 max_ring_load = Np;
                 
-                % Get number of DFS packets to transmit
+                % Get number of L_DP packets to transmit
                 if payload_aggregation
                     num_dfs = get_num_dfs(Np, p_ratio);
                 else
@@ -75,20 +75,20 @@ for pow_ix = 1:length(P_LVL)
                 
                 ring_load = Np;
                 dfs_ring_load = num_dfs;
-                t_tx = (num_dfs * DFS * 8) / r_aux;
+                t_tx = (num_dfs * L_DP * 8) / r_aux;
                 E_TX(pow_ix,rate_ix) = t_tx * (I_LVL(pow_ix) * V);
                 % Reception
                 if ring < num_rings
                     children_subtree_size = sum(n(1:num_rings-ring));   % Payloads to be listened from each child
                     
-                    % Get number of DFS packets to listen
+                    % Get number of L_DP packets to listen
                     if payload_aggregation
                         num_dfs_per_child = get_num_dfs(children_subtree_size, p_ratio);
                     else
                         num_dfs_per_child = children_subtree_size;
                     end
                     
-                    t_rx = (child_ratio * num_dfs_per_child * DFS * 8) / r_aux;
+                    t_rx = (child_ratio * num_dfs_per_child * L_DP * 8) / r_aux;
                     E_RX(pow_ix,rate_ix) = t_rx * I_rx * V;
                 end
                 if (E_TX(pow_ix,rate_ix)+E_RX(pow_ix,rate_ix)) < E_opt % Optimize the transmission energy

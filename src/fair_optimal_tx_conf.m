@@ -53,7 +53,7 @@ for delta_conf_ix = 1:num_delta_combinations
                     max_ring_load = Np;
                     % num_dfs_tx = ceil(num_payloads / p_ratio);  % Padding taken into account
                     
-                    % Get number of DFS packets to transmit
+                    % Get number of L_DP packets to transmit
                     if aggregation == 1
                         num_dfs = get_num_dfs(Np, p_ratio);
                     elseif aggregation == 0
@@ -63,7 +63,7 @@ for delta_conf_ix = 1:num_delta_combinations
                     end
                     ring_load = Np;
                     dfs_ring_load = num_dfs;
-                    t_tx = (num_dfs * DFS * 8) / r_aux;
+                    t_tx = (num_dfs * L_DP * 8) / r_aux;
                     E_TX(pow_ix,j) = t_tx * (I_LVL(pow_ix) * V);
                     % Reception
                     t_rx = 0;
@@ -73,7 +73,7 @@ for delta_conf_ix = 1:num_delta_combinations
                             link_children_ratio = n(source_ring_ix)/n(ring);
                             num_dfs_per_child =  balanced_results(delta_conf_ix, source_ring_ix, 9);
                             dfs_received = dfs_received + link_children_ratio * num_dfs_per_child;
-                            t_rx = t_rx + (link_children_ratio * num_dfs_per_child * DFS * 8) / R_LVL(balanced_results(delta_conf_ix, source_ring_ix, 5));
+                            t_rx = t_rx + (link_children_ratio * num_dfs_per_child * L_DP * 8) / R_LVL(balanced_results(delta_conf_ix, source_ring_ix, 5));
                         end
                     end;
                     E_RX(pow_ix,j) = t_rx * I_rx * V;
