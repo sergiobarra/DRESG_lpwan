@@ -1,3 +1,8 @@
+%%% "Distance-Ring Exponential Stations Generator (DRESG) for LPWANs"
+%%% Author: Sergio Barrachina (sergio.barrachina@upf.edu)
+%%% More info at S. Barrachina, B. Bellalta, T. Adame, and A. Bel, “Multi-hop Communication in the Uplink for LPWANs,” 
+%%% arXiv preprint arXiv:1611.08703, 2016.
+
 function [num_delta_combinations, delta_combinations] = get_all_ring_hops(R)
     % This algorithm computes the set of possible ring hops for a given 
     % number of rings by considering every possible routing link among the 

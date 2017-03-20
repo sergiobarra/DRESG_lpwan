@@ -61,7 +61,7 @@ sh_results = zeros(num_rings, RESULTS_NUM_ELEMENTS);           % Single-hop resu
 nrh_results = zeros(num_rings, RESULTS_NUM_ELEMENTS);          % Next-ring-hop results
 nrh_noagg_results = zeros(num_rings, RESULTS_NUM_ELEMENTS);    % Next-ring-hop without aggregation results
 
-disp('- Obtaining single-hop and Next-ring-hop transmission configurations (TX power & rate).')
+disp('- Obtaining single-hop and Next-ring-hop transmission configurations (TX power & rate)...')
 disp('  NOTE: routing is pre-established by definition!')
 
 % disp('  · progress: 0%')
@@ -133,16 +133,21 @@ end
 
 % Optimal-hop
 disp('- Obtaining Optimal-hop routing and optimal transmission configurations (TX power & rate)...')
-disp('  NOTE: optimal routing will depend on DRESG deployment and scenario!')
-[oh_results, optimal_diverse_delta_conf ] = fair_optimal_tx_conf(1);
-[oh_noagg_results, optimal_diverse_delta_conf_no_agg ] = fair_optimal_tx_conf(0);
+disp('  NOTE: optimal routing will depend on the DRESG deployment and scenario!')
+[oh_results, optimal_diverse_delta_conf ] = fair_optimal_tx_conf(true);
+[oh_noagg_results, optimal_diverse_delta_conf_no_agg ] = fair_optimal_tx_conf(false);
 
 % Bottlenecks
-[sh_btle_e, sh_btle_ix] = max(sh_results(:,1) + sh_results(:,6));       % Single-hop bottleneck energy and index
-[nrh_btle_e, nrh_btle_ix] = max(nrh_results(:,1) + nrh_results(:,6));   % Next-ring-hop botteleneck enery and index
-[nrh_noagg_btle_e, nrh_noagg_btle_ix] = max(nrh_noagg_results(:,1) + nrh_noagg_results(:,6));
-[oh_btle_e, oh_btle_ix] = max(oh_results(:,1) + oh_results(:,6));
-[oh_noagg_btle_e, oh_noagg_btle_ix] = max(oh_noagg_results(:,1) + oh_noagg_results(:,6));
+[sh_btle_e, sh_btle_ix] = max(sh_results(:,RESULTS_IX_ENERGY_TX)...
+    + sh_results(:,RESULTS_IX_ENERGY_RX));       % Single-hop bottleneck energy and index
+[nrh_btle_e, nrh_btle_ix] = max(nrh_results(:,RESULTS_IX_ENERGY_TX)...
+    + nrh_results(:,RESULTS_IX_ENERGY_RX));   % Next-ring-hop botteleneck enery and index
+[nrh_noagg_btle_e, nrh_noagg_btle_ix] = max(nrh_noagg_results(:,RESULTS_IX_ENERGY_TX)...
+    + nrh_noagg_results(:,RESULTS_IX_ENERGY_RX));
+[oh_btle_e, oh_btle_ix] = max(oh_results(:,RESULTS_IX_ENERGY_TX)...
+    + oh_results(:,RESULTS_IX_ENERGY_RX));
+[oh_noagg_btle_e, oh_noagg_btle_ix] = max(oh_noagg_results(:,RESULTS_IX_ENERGY_TX)...
+    + oh_noagg_results(:,RESULTS_IX_ENERGY_RX));
 
 disp(['- Optimal transmission configurations for Single-hop, Next-Ring-hop & Optimal-hop (with corresponding '...
     'optimal routing links in the last case) identified!'])
@@ -173,7 +178,7 @@ if display_sh
         disp(['  · Ring ' num2str(ring_ix) ' (d = ' num2str(d_ring(ring_ix)) ' m): ']);
         disp(['    * Destination ring: ' num2str(sh_results(ring_ix,10))]);
         disp(['    * Payloads per node (L_DPs): ' num2str(sh_results(ring_ix,7)) ' (' num2str(sh_results(ring_ix,9)) ')']);
-        disp(['    * Max. payloads per node (L_DPs): ' num2str(sh_results(ring_ix,8)) ' (' num2str(get_num_dfs(sh_results(ring_ix,8),p_ratio)) ')']);
+        disp(['    * Max. payloads per node (L_DPs): ' num2str(sh_results(ring_ix,8)) ' (' num2str(get_num_packets(sh_results(ring_ix,8),p_ratio)) ')']);
         disp(['    * Configuration: P_opt = ' num2str(sh_results(ring_ix,2)) ' dBm (level ' num2str(sh_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' num2str(sh_results(ring_ix,4) / 1000) ' Kbps (level ' num2str(sh_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
         disp(['    * Energy cons.: E_tx = ' num2str(sh_results(ring_ix,1) * 1000) ' uJ - E_rx = ' num2str(sh_results(ring_ix,6) * 1000) ' uJ']);
     end
@@ -191,7 +196,7 @@ if display_nrh
         disp(['  · Ring ' num2str(ring_ix) ' (d = ' num2str(d_ring(ring_ix)) ' m): ']);
         disp(['    * Destination ring: ' num2str(nrh_results(ring_ix,10))]);
         disp(['    * Payloads per node (L_DPs): ' num2str(nrh_results(ring_ix,7)) ' (' num2str(nrh_results(ring_ix,9)) ')']);
-        disp(['    * Max. payloads per node (L_DPs): ' num2str(nrh_results(ring_ix,8)) ' (' num2str(get_num_dfs(nrh_results(ring_ix,8),p_ratio)) ')']);
+        disp(['    * Max. payloads per node (L_DPs): ' num2str(nrh_results(ring_ix,8)) ' (' num2str(get_num_packets(nrh_results(ring_ix,8),p_ratio)) ')']);
         disp(['    * Configuration: P_opt = ' num2str(nrh_results(ring_ix,2)) ' dBm (level ' num2str(nrh_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' num2str(nrh_results(ring_ix,4) / 1000) ' Kbps (level ' num2str(nrh_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
         disp(['    *  Energy cons.: E_tx = ' num2str(nrh_results(ring_ix,1) * 1000) ' uJ - E_rx = ' num2str(nrh_results(ring_ix,6) * 1000) ' uJ']);
     end
@@ -209,7 +214,7 @@ if display_nrh_noagg
         disp(['  · Ring ' num2str(ring_ix) ' (d = ' num2str(d_ring(ring_ix)) ' m): ']);
         disp(['    * Destination ring: ' num2str(nrh_noagg_results(ring_ix,10))]);
         disp(['    * Payloads per node (L_DPs): ' num2str(nrh_noagg_results(ring_ix,7)) ' (' num2str(nrh_noagg_results(ring_ix,9)) ')']);
-        disp(['    * Max. payloads per node (L_DPs): ' num2str(nrh_noagg_results(ring_ix,8)) ' (' num2str(get_num_dfs(nrh_noagg_results(ring_ix,8),p_ratio)) ')']);
+        disp(['    * Max. payloads per node (L_DPs): ' num2str(nrh_noagg_results(ring_ix,8)) ' (' num2str(get_num_packets(nrh_noagg_results(ring_ix,8),p_ratio)) ')']);
         disp(['    * Configuration: P_opt = ' num2str(nrh_noagg_results(ring_ix,2)) ' dBm (level ' num2str(nrh_noagg_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' num2str(nrh_noagg_results(ring_ix,4) / 1000) ' Kbps (level ' num2str(nrh_noagg_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
         disp(['    * Energy cons.: E_tx = ' num2str(nrh_noagg_results(ring_ix,1) * 1000) ' uJ - E_rx = ' num2str(nrh_noagg_results(ring_ix,6) * 1000) ' uJ']);
     end
@@ -228,7 +233,7 @@ if display_oh
         disp(['    * Ring ' num2str(ring_ix) ' (d = ' num2str(d_ring(ring_ix)) ' m): ']);
         disp(['    * Destination ring: ' num2str(oh_results(ring_ix,10))]);
         disp(['    * Payloads per node (L_DPs): ' num2str(oh_results(ring_ix,7)) ' (' num2str(oh_results(ring_ix,9)) ')']);
-        disp(['    * Max. payloads per node (L_DPs): ' num2str(oh_results(ring_ix,8)) ' (' num2str(get_num_dfs(oh_results(ring_ix,8),p_ratio)) ')']);
+        disp(['    * Max. payloads per node (L_DPs): ' num2str(oh_results(ring_ix,8)) ' (' num2str(get_num_packets(oh_results(ring_ix,8),p_ratio)) ')']);
         disp(['    * Configuration: P_opt = ' num2str(oh_results(ring_ix,2)) ' dBm (level ' num2str(oh_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' num2str(oh_results(ring_ix,4) / 1000) ' Kbps (level ' num2str(oh_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
         disp(['    * Energy cons.: E_tx = ' num2str(oh_results(ring_ix,1) * 1000) ' uJ - E_rx = ' num2str(oh_results(ring_ix,6) * 1000) ' uJ']);
         disp(['    * L_DPs received: ' num2str(oh_results(ring_ix,11))]);
@@ -248,7 +253,7 @@ if display_oh_noagg
         disp(['  · Ring ' num2str(ring_ix) ' (d = ' num2str(d_ring(ring_ix)) ' m): ']);
         disp(['    * Destination ring: ' num2str(oh_noagg_results(ring_ix,10))]);
         disp(['    * Payloads per node (L_DPs): ' num2str(oh_noagg_results(ring_ix,7)) ' (' num2str(oh_noagg_results(ring_ix,9)) ')']);
-        disp(['    * Max. payloads per node (L_DPs): ' num2str(oh_noagg_results(ring_ix,8)) ' (' num2str(get_num_dfs(oh_noagg_results(ring_ix,8),p_ratio)) ')']);
+        disp(['    * Max. payloads per node (L_DPs): ' num2str(oh_noagg_results(ring_ix,8)) ' (' num2str(get_num_packets(oh_noagg_results(ring_ix,8),p_ratio)) ')']);
         disp(['    * Configuration: P_opt = ' num2str(oh_noagg_results(ring_ix,2)) ' dBm (level ' num2str(oh_noagg_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' num2str(oh_noagg_results(ring_ix,4) / 1000) ' Kbps (level ' num2str(oh_noagg_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
         disp(['    * Energy cons.: E_tx = ' num2str(oh_noagg_results(ring_ix,1) * 1000) ' uJ - E_rx = ' num2str(oh_noagg_results(ring_ix,6) * 1000) ' uJ']);
     end

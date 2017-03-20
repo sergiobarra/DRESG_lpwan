@@ -1,6 +1,10 @@
-%%% "Distance-Ring Tree-Topology Network (DRTTN) Framework" project (Oct 2016)
+%%% "Distance-Ring Exponential Stations Generator (DRESG) for LPWANs"
 %%% Author: Sergio Barrachina (sergio.barrachina@upf.edu)
-%%% File description: Set RNT configuration
+%%% More info at S. Barrachina, B. Bellalta, T. Adame, and A. Bel, “Multi-hop Communication in the Uplink for LPWANs,” 
+%%% arXiv preprint arXiv:1611.08703, 2016.
+%%%
+%%% File description: script for setting the DRESG configuration for
+%%% posterior analysis.
 
 % Close opened figures and clear workspace variables
 clc
