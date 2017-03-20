@@ -2,7 +2,6 @@
 %%% Author: Sergio Barrachina (sergio.barrachina@upf.edu)
 %%% More info at S. Barrachina, B. Bellalta, T. Adame, and A. Bel, “Multi-hop Communication in the Uplink for LPWANs,” 
 %%% arXiv preprint arXiv:1611.08703, 2016.
-%%%
 %%% File description: Main script for running DRESG analyses
 
 % Close open figures and clear variables

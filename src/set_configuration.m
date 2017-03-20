@@ -54,8 +54,8 @@ lambda = c/f;                       % Propagation wavelength [m]
 Grx = 3;                            % Receiver gain [dBi]
 Gtx = 0;                            % Transmitter gaint [dBi]
 No = -200.93;                       % Noise power density
-prop_model = PROPAGATION_MODEL_URBAN_MACRO; % Propagation model (0: Free space, 1: 802.11 Urban macro deployment, 2: 802.11 pico/hotzone)
-fibo_stress = 1;                    % First fibonnaci number to consider (0 if usual)
+prop_model = PROPAGATION_MODEL_URBAN_MACRO; % Propagation model
+fibo_stress = 1;                    % First fibonnaci number to consider
 
 plot_topology = true;               % Flag for plotting the DRESG topology. Too crowded LPWANs may not be properly represented.
 plot_ring_spread = true;            % Flag for plotting the ring locations
@@ -216,8 +216,8 @@ end
 disp('- Distance between each ring and the GW (m):')
 disp(d_ring)
 
-
-[num_delta_combinations, delta_combinations] = get_all_ring_hops(num_rings);  % Number and set of every possible combination of ring hops
+% Number and set of every possible combination of ring hops
+[num_delta_combinations, delta_combinations] = get_all_ring_hops(num_rings);  
 
 % Save configuration parameters as global variables to be used by other
 % scripts (NOTE: mind the name repetition of variables!)

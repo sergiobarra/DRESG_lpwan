@@ -1,11 +1,17 @@
-%%% "Ring Network Topology (RNT) Framework" project (September 2016)
+%%% "Distance-Ring Exponential Stations Generator (DRESG) for LPWANs"
 %%% Author: Sergio Barrachina (sergio.barrachina@upf.edu)
+%%% More info at S. Barrachina, B. Bellalta, T. Adame, and A. Bel, “Multi-hop Communication in the Uplink for LPWANs,” 
+%%% arXiv preprint arXiv:1611.08703, 2016.
+%%%
+%%% File description: Function for computing several parameters
+%%% for performing a consumption analysis corresponding to nodes belonging
+%%% to a given ring and implementing a certain routing mode.
 
-function [E_tx, P_opt, ix_P, r_opt, ix_r, E_rx, ring_load, max_ring_load, dfs_ring_load, ring_dest] =...
+function [E_tx, P_opt, ix_P, r_opt, ix_r, E_rx, avg_num_payloads, max_num_payloads, avg_num_packets, ring_dest] =...
         single_multi_optimal_tx_conf(routing_mode, ring, payload_aggregation)
-% single_multi_optimal_tx_conf returns 6 parameters corresponding to the
+% single_multi_optimal_tx_conf returns 10 parameters corresponding to the
 % optimal TX configuration (TX output power, TX rate) in terms of energy 
-% savings for the nodes in a give ring and routing mode.
+% savings for the nodes in a given ring and routing mode.
 %   Arguments:
 %   - routing_mode: single-hop or next-ring-hop (0 or 1)
 %   - ring: ring of the node
@@ -17,10 +23,10 @@ function [E_tx, P_opt, ix_P, r_opt, ix_r, E_rx, ring_load, max_ring_load, dfs_ri
 %   - r_opt: optimal rate
 %   - ix_r: index of the optimal rate level
 %   - E_rx: receiving energy consumption (for multi-hop model)
-%   - ring_load: Average number of payloads to be sent per STA
-%   - max_ring_load: Maximum number of payloads to be sent per STA (when
+%   - avg_num_payloads: Average number of payloads to be sent per STA
+%   - max_num_payloads: Maximum number of payloads to be sent per STA (when
 %   probability of transmitting is 1)
-%   - dfs_ring_load: Average number of DFSs to be sent per STA
+%   - avg_num_packets: Average number of DFSs to be sent per STA
 %   - ring_destination: index of the destination ring
 
 load('configuration.mat')
@@ -29,7 +35,7 @@ E_TX = zeros(length(P_LVL),length(R_LVL));     % TX consumption matrix for suita
 E_RX = zeros(length(P_LVL),length(R_LVL));     % RX consumption matrix for suitable configurations (else: 0)
 E_opt = 100000000000;    % Optimal consumption (to be minimized)
 P_opt = 0;
-ring_load = 0;
+avg_num_payloads = 0;
 for pow_ix = 1:length(P_LVL)
     for rate_ix = 1:length(R_LVL)
         Dmax(pow_ix,rate_ix) = max_distance(prop_model, P_LVL(pow_ix), Grx, Gtx, S(rate_ix), f);
@@ -53,9 +59,9 @@ for pow_ix = 1:length(P_LVL)
                     E_opt = E_tx + E_rx;   
                 end
             end
-            ring_load = Np;  
-            dfs_ring_load = num_dfs;
-            max_ring_load = Np; % Each node send just its own payload
+            avg_num_payloads = Np;  
+            avg_num_packets = num_dfs;
+            max_num_payloads = Np; % Each node send just its own payload
             ring_dest = 0;  % Destination is always the GW
             
         % Multi-hop
@@ -64,7 +70,7 @@ for pow_ix = 1:length(P_LVL)
                 r_aux = R_LVL(rate_ix);
                 % Transmission
                 Np = sum(n(1:(num_rings - ring + 1)));    % Max number of payload to be txd (subtree size)
-                max_ring_load = Np;
+                max_num_payloads = Np;
                 
                 % Get number of L_DP packets to transmit
                 if payload_aggregation
@@ -73,8 +79,8 @@ for pow_ix = 1:length(P_LVL)
                     num_dfs = Np;
                 end
                 
-                ring_load = Np;
-                dfs_ring_load = num_dfs;
+                avg_num_payloads = Np;
+                avg_num_packets = num_dfs;
                 t_tx = (num_dfs * L_DP * 8) / r_aux;
                 E_TX(pow_ix,rate_ix) = t_tx * (I_LVL(pow_ix) * V);
                 % Reception

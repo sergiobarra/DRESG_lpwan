@@ -1,5 +1,7 @@
-%%% "Ring Network Topology (RNT) Framework" project (September 2016)
+%%% "Distance-Ring Exponential Stations Generator (DRESG) for LPWANs"
 %%% Author: Sergio Barrachina (sergio.barrachina@upf.edu)
+%%% More info at S. Barrachina, B. Bellalta, T. Adame, and A. Bel, “Multi-hop Communication in the Uplink for LPWANs,” 
+%%% arXiv preprint arXiv:1611.08703, 2016.
 
 function [ fair_optimal_conf, optimal_delta_conf ] = fair_optimal_tx_conf(aggregation)
 % fair_optimal_tx_conf returns 2 parameters corresponding to the best TX
