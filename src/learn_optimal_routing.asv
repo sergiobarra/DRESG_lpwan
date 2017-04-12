@@ -1,0 +1,51 @@
+function [ actions_history ] = ... 
+        learn_optimal_routing( max_num_iterations, set_ring_hops_combinations, aggregation_on, learning_approach )
+    %LEARN_OPTIMAL_ROUTING applies learning for identfying an optimal (or
+    %pseudo-optimal) ring hops combination
+    %   Detailed explanation goes here
+    
+    % At the moment just consider e-greedy learning approach
+    
+%     switch learning_approach
+%         
+%         case 0
+% 
+%         otherwise
+%             error('Learning approach unkown!')
+%     
+%     end
+
+    % Learning tunning parameters
+    epsilon_initial = 0.1;
+
+    num_possible_arms = size(set_ring_hops_combinations, 1);
+
+    reward_per_arm = ones(1,num_possible_arms) .* -1;
+    
+    actions_history = zeros(1,  
+
+    iteration = 1;
+
+    epsilon = epsilon_initial;
+    
+    while(iteration < max_num_iterations) 
+
+        % Pick a ring hops combination (i.e., arm)
+        selected_arm = selectActionEGreedy(reward_per_arm, epsilon);
+
+        ring_hops_combination = set_ring_hops_combinations(selected_arm);
+        
+        [btle_e, btle_ix, ~, ~, ~] = general_optimal_tx_conf(ring_hops_combination, aggregation_on);
+    
+        reward = 1/btle_e;
+        reward_per_arm(selected_arm) = reward;      
+
+        learning_iteration = learning_iteration + 1;
+
+        epsilon = epsilon_initial / sqrt(t);    
+        % Increase the number of 'learning iterations' of a WLAN
+        iteration = iteration + 1; 
+    end
+    
+end
+

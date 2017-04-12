@@ -4,7 +4,7 @@
 %%% arXiv preprint arXiv:1611.08703, 2016.
 
 function [ num_packets ] = get_num_packets( num_payloads, max_pay_dfs )
-    % get_num_dfs() returns the number of data packets needed to be sent for a given number
+    % get_num_packets() returns the number of data packets needed to be sent for a given number
     % of payloads.
     %   Arguments:
     %   - num_payloads: Num. of payload to be sent

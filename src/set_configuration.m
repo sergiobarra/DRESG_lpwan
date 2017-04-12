@@ -16,7 +16,7 @@ ROUTING_MODEL_SINGLE_HOP = 0;       % Single-hop routing model
 ROUTING_MODEL_NEXT_RING_HOP = 1;    % Next-ring-hop routing model
 ROUTING_MODEL_OPTIMAL_HOP = 2;      % Optimal-hop routing model
 
-RESULTS_NUM_ELEMENTS = 10;          % Number of elements in the 'results' array
+RESULTS_NUM_ELEMENTS = 11;          % Number of elements in the 'results' array
 RESULTS_IX_ENERGY_TX = 1;           % Index of the energy consumed with optimal configuration
 RESULTS_IX_POWER_OPT = 2;           % Index of the optimal transmission power
 RESULTS_IX_POWER_LVL = 3;           % Index of the optimal transmission power level  
@@ -27,6 +27,7 @@ RESULTS_IX_RING_LOAD = 7;           % Index of the average number of payloads to
 RESULTS_IX_MAX_RING_LOAD = 8;       % Index of the maximum number of payloads to be sent per STA (when PER = 0)
 RESULTS_IX_DFS_RING_LOAD = 9;       % Index of the average number of DFS to be sent per STA
 RESULTS_IX_RING_DESTIINATION = 10;  % Index of the the destination ring
+RESULTS_IX_NUM_PACKETS_RX = 11;     % Index of the the destination ring
 
 TRANSCEIVER_MODEL_CC1100 = 0;       % CC1100 transceiver model
 TRANSCEIVER_MODEL_CC1200 = 1;       % CC1100 transceiver model
@@ -43,12 +44,12 @@ RING_SPREAD_MODEL_INVERSE_FIBONACCI = 2;    % Inverse Fibonacci ring spread mode
 
 %% Main configuration parameters (EDITABLE)
 
-num_rings = 5;                     % Num of rings of the DRESG deployment (a.k.a R)
-child_ratio = 4;                    % Num of children of STAs not belonging to the last ring
+num_rings = 7;                     % Num of rings of the DRESG deployment (a.k.a R)
+child_ratio = 3;                    % Num of children of STAs not belonging to the last ring
 spread_model = RING_SPREAD_MODEL_EQUIDISTANT;   % Equidistant, fibonacci or reverse fibonnaci
 transceiver_model = TRANSCEIVER_MODEL_CC1200;   % Transceiver model (0: CC1100, 1: CC1200, 2: si4464 (SigFox))
 
-L_DP = 65;                          % Fixed data packet length [Byte]
+L_DP = 65;                          % Fixed data packet length [Bytes]
 L_payload = 15;                     % Fixed payload length [Bytes]
 L_header = 2;                       % Fixed ENTOMATIC header length [Bytes]
 V = 3;                              % STAs nominal voltage [V]
@@ -61,8 +62,8 @@ No = -200.93;                       % Noise power density
 prop_model = PROPAGATION_MODEL_URBAN_MACRO; % Propagation model
 fibo_stress = 1;                    % First fibonnaci number to consider
 
-plot_topology = true;               % Flag for plotting the DRESG topology. Too crowded LPWANs may not be properly represented.
-plot_ring_spread = true;            % Flag for plotting the ring locations
+plot_topology = false;               % Flag for plotting the DRESG topology. Too crowded LPWANs may not be properly represented.
+plot_ring_spread = false;            % Flag for plotting the ring locations
 
 
 %%  Load configuration parameters
@@ -181,8 +182,6 @@ if plot_topology
     str = ['child ratio: ' num2str(child_ratio)];
     annotation('textbox',dim,'String',str,'FitBoxToText','on');
 
-    figure
-    plot(G, 'black')
 end
 
 switch spread_model
@@ -222,8 +221,15 @@ disp(d_ring)
 
 % Number and set of every possible combination of ring hops
 [num_delta_combinations, delta_combinations] = get_all_ring_hops(num_rings);  
+disp(['- Possible delta combinations (total of ' num2str(num_delta_combinations) '):'])
+disp(delta_combinations)
 
 % Save configuration parameters as global variables to be used by other
 % scripts (NOTE: mind the name repetition of variables!)
 save('configuration.mat')
 disp('Configuration saved!')
+
+
+
+
+

@@ -35,9 +35,9 @@ if display_dresg_configuration
     disp('  · Hardware paremeters:');
     disp(['    - transceiver model:  ' transceiver_model_str]);
     disp('  · Network parameters:');
-    disp(['    - fixed packet length =  ' num2str(L_DP) ' B']);
-    disp(['    - header length =  ' num2str(L_header) ' B']);
-    disp(['    - payload length =  ' num2str(L_payload) ' B']);
+    disp(['    - fixed packet length =  ' num2str(L_DP) ' bytes']);
+    disp(['    - header length =  ' num2str(L_header) ' bytes']);
+    disp(['    - payload length =  ' num2str(L_payload) ' bytes']);
     disp(['    - Max. payloads per L_DP (payload ratio) =  ' num2str(p_ratio)]);
     disp('  · DRESG topology:');
     disp(['    - child ratio =  ' num2str(child_ratio)]);
@@ -52,10 +52,9 @@ if display_dresg_configuration
 end
 
 
-%% IDENTIFY OF OPTIMAL CONFIGURATIONS
+%% IDENTIFY OPTIMAL CONFIGURATIONS
 
-% Get optimal configuration for each ring. Stored it in 'results' matrix TO
-% BE PROPERLY EXPLAINED!
+% Get optimal configuration for each ring. Stored it in 'results' matrix
 sh_results = zeros(num_rings, RESULTS_NUM_ELEMENTS);           % Single-hop results
 nrh_results = zeros(num_rings, RESULTS_NUM_ELEMENTS);          % Next-ring-hop results
 nrh_noagg_results = zeros(num_rings, RESULTS_NUM_ELEMENTS);    % Next-ring-hop without aggregation results
@@ -73,7 +72,7 @@ for ring_ix = 1:num_rings
     routing_mode = ROUTING_MODEL_SINGLE_HOP;
     payload_aggregation = false;
         
-    [E_tx, P_opt, ix_P, r_opt, ix_R, E_rx, ring_load, max_ring_load, dfs_ring_load, ring_dest] =...
+    [E_tx, P_opt, ix_P, r_opt, ix_R, E_rx, ring_load, max_ring_load, dfs_ring_load, ring_dest, num_packets_rx] =...
         single_multi_optimal_tx_conf(routing_mode, ring, payload_aggregation);
     
     sh_results(num_rings-ring_ix+1,RESULTS_IX_ENERGY_TX) = E_tx;
@@ -86,13 +85,14 @@ for ring_ix = 1:num_rings
     sh_results(num_rings-ring_ix+1,RESULTS_IX_MAX_RING_LOAD) = max_ring_load;
     sh_results(num_rings-ring_ix+1,RESULTS_IX_DFS_RING_LOAD) = dfs_ring_load;
     sh_results(num_rings-ring_ix+1,RESULTS_IX_RING_DESTIINATION) = ring_dest;
+    sh_results(num_rings-ring_ix+1,RESULTS_IX_NUM_PACKETS_RX) = num_packets_rx;
     
     
     %  Next-ring-hop (STA to parent in next ring)
     routing_mode = ROUTING_MODEL_NEXT_RING_HOP;
     payload_aggregation = true;
     
-    [E_tx, P_opt, ix_P, r_opt, ix_R, E_rx, ring_load, max_ring_load, dfs_ring_load, ring_dest] =...
+    [E_tx, P_opt, ix_P, r_opt, ix_R, E_rx, ring_load, max_ring_load, dfs_ring_load, ring_dest, num_packets_rx] =...
         single_multi_optimal_tx_conf(routing_mode, ring, payload_aggregation);
     
     nrh_results(num_rings-ring_ix+1,RESULTS_IX_ENERGY_TX) = E_tx;
@@ -105,11 +105,12 @@ for ring_ix = 1:num_rings
     nrh_results(num_rings-ring_ix+1,RESULTS_IX_MAX_RING_LOAD) = max_ring_load;
     nrh_results(num_rings-ring_ix+1,RESULTS_IX_DFS_RING_LOAD) = dfs_ring_load;
     nrh_results(num_rings-ring_ix+1,RESULTS_IX_RING_DESTIINATION) = ring_dest;
+    nrh_results(num_rings-ring_ix+1,RESULTS_IX_NUM_PACKETS_RX) = num_packets_rx;
        
     % Next-ring-hop without payload aggregation
     payload_aggregation = false;
     
-    [E_tx, P_opt, ix_P, r_opt, ix_R, E_rx, ring_load, max_ring_load, dfs_ring_load, ring_dest] =...
+    [E_tx, P_opt, ix_P, r_opt, ix_R, E_rx, ring_load, max_ring_load, dfs_ring_load, ring_dest, num_packets_rx] =...
         single_multi_optimal_tx_conf(routing_mode, ring, payload_aggregation);
     
     nrh_noagg_results(num_rings-ring_ix+1,RESULTS_IX_ENERGY_TX) = E_tx;
@@ -122,6 +123,7 @@ for ring_ix = 1:num_rings
     nrh_noagg_results(num_rings-ring_ix+1,RESULTS_IX_MAX_RING_LOAD) = max_ring_load;
     nrh_noagg_results(num_rings-ring_ix+1,RESULTS_IX_DFS_RING_LOAD) = dfs_ring_load;
     nrh_noagg_results(num_rings-ring_ix+1,RESULTS_IX_RING_DESTIINATION) = ring_dest;
+    nrh_noagg_results(num_rings-ring_ix+1,RESULTS_IX_NUM_PACKETS_RX) = num_packets_rx;
     
 %     if(ring_ix == num_rings)
 %         disp('  · progress: 100 %')
@@ -133,8 +135,8 @@ end
 % Optimal-hop
 disp('- Obtaining Optimal-hop routing and optimal transmission configurations (TX power & rate)...')
 disp('  NOTE: optimal routing will depend on the DRESG deployment and scenario!')
-[oh_results, optimal_diverse_delta_conf ] = fair_optimal_tx_conf(true);
-[oh_noagg_results, optimal_diverse_delta_conf_no_agg ] = fair_optimal_tx_conf(false);
+[oh_results, optimal_diverse_delta_conf ] = optimal_routing_and_tx_conf(true);
+[oh_noagg_results, optimal_diverse_delta_conf_no_agg ] = optimal_routing_and_tx_conf(false);
 
 % Bottlenecks
 [sh_btle_e, sh_btle_ix] = max(sh_results(:,RESULTS_IX_ENERGY_TX)...
@@ -176,10 +178,16 @@ if display_sh
     for ring_ix = 1:num_rings
         disp(['  · Ring ' num2str(ring_ix) ' (d = ' num2str(d_ring(ring_ix)) ' m): ']);
         disp(['    * Destination ring: ' num2str(sh_results(ring_ix,10))]);
-        disp(['    * Payloads per node (L_DPs): ' num2str(sh_results(ring_ix,7)) ' (' num2str(sh_results(ring_ix,9)) ')']);
-        disp(['    * Max. payloads per node (L_DPs): ' num2str(sh_results(ring_ix,8)) ' (' num2str(get_num_packets(sh_results(ring_ix,8),p_ratio)) ')']);
-        disp(['    * Configuration: P_opt = ' num2str(sh_results(ring_ix,2)) ' dBm (level ' num2str(sh_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' num2str(sh_results(ring_ix,4) / 1000) ' Kbps (level ' num2str(sh_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
-        disp(['    * Energy cons.: E_tx = ' num2str(sh_results(ring_ix,1) * 1000) ' uJ - E_rx = ' num2str(sh_results(ring_ix,6) * 1000) ' uJ']);
+        disp(['    * Payloads per node (L_DPs): ' num2str(sh_results(ring_ix,7)) ...
+            ' (' num2str(sh_results(ring_ix,9)) ')']);
+        disp(['    * Max. payloads per node (L_DPs): ' num2str(sh_results(ring_ix,8)) ...
+            ' (' num2str(get_num_packets(sh_results(ring_ix,8),p_ratio)) ')']);
+        disp(['    * Configuration: P_opt = ' num2str(sh_results(ring_ix,2)) ...
+            ' dBm (level ' num2str(sh_results(ring_ix,3)) '/' num2str(length(P_LVL)) ...
+            ') - r_opt = ' num2str(sh_results(ring_ix,4) / 1000) ' Kbps (level ' ...
+            num2str(sh_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
+        disp(['    * Energy cons.: E_tx = ' num2str(sh_results(ring_ix,1) * 1000) ...
+            ' uJ - E_rx = ' num2str(sh_results(ring_ix,6) * 1000) ' uJ']);
     end
     disp(' ');
     disp('- Summary:')
@@ -194,10 +202,16 @@ if display_nrh
     for ring_ix = 1:num_rings
         disp(['  · Ring ' num2str(ring_ix) ' (d = ' num2str(d_ring(ring_ix)) ' m): ']);
         disp(['    * Destination ring: ' num2str(nrh_results(ring_ix,10))]);
-        disp(['    * Payloads per node (L_DPs): ' num2str(nrh_results(ring_ix,7)) ' (' num2str(nrh_results(ring_ix,9)) ')']);
-        disp(['    * Max. payloads per node (L_DPs): ' num2str(nrh_results(ring_ix,8)) ' (' num2str(get_num_packets(nrh_results(ring_ix,8),p_ratio)) ')']);
-        disp(['    * Configuration: P_opt = ' num2str(nrh_results(ring_ix,2)) ' dBm (level ' num2str(nrh_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' num2str(nrh_results(ring_ix,4) / 1000) ' Kbps (level ' num2str(nrh_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
-        disp(['    *  Energy cons.: E_tx = ' num2str(nrh_results(ring_ix,1) * 1000) ' uJ - E_rx = ' num2str(nrh_results(ring_ix,6) * 1000) ' uJ']);
+        disp(['    * Payloads per node (L_DPs): ' num2str(nrh_results(ring_ix,7)) ...
+            ' (' num2str(nrh_results(ring_ix,9)) ')']);
+        disp(['    * Max. payloads per node (L_DPs): ' num2str(nrh_results(ring_ix,8)) ...
+            ' (' num2str(get_num_packets(nrh_results(ring_ix,8),p_ratio)) ')']);
+        disp(['    * Configuration: P_opt = ' num2str(nrh_results(ring_ix,2)) ' dBm (level ' ...
+            num2str(nrh_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' ...
+            num2str(nrh_results(ring_ix,4) / 1000) ' Kbps (level ' ...
+            num2str(nrh_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
+        disp(['    *  Energy cons.: E_tx = ' num2str(nrh_results(ring_ix,1) * 1000) ...
+            ' uJ - E_rx = ' num2str(nrh_results(ring_ix,6) * 1000) ' uJ']);
     end
     disp(' ');
     disp('  · Summary:')
@@ -212,10 +226,16 @@ if display_nrh_noagg
     for ring_ix = 1:num_rings
         disp(['  · Ring ' num2str(ring_ix) ' (d = ' num2str(d_ring(ring_ix)) ' m): ']);
         disp(['    * Destination ring: ' num2str(nrh_noagg_results(ring_ix,10))]);
-        disp(['    * Payloads per node (L_DPs): ' num2str(nrh_noagg_results(ring_ix,7)) ' (' num2str(nrh_noagg_results(ring_ix,9)) ')']);
-        disp(['    * Max. payloads per node (L_DPs): ' num2str(nrh_noagg_results(ring_ix,8)) ' (' num2str(get_num_packets(nrh_noagg_results(ring_ix,8),p_ratio)) ')']);
-        disp(['    * Configuration: P_opt = ' num2str(nrh_noagg_results(ring_ix,2)) ' dBm (level ' num2str(nrh_noagg_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' num2str(nrh_noagg_results(ring_ix,4) / 1000) ' Kbps (level ' num2str(nrh_noagg_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
-        disp(['    * Energy cons.: E_tx = ' num2str(nrh_noagg_results(ring_ix,1) * 1000) ' uJ - E_rx = ' num2str(nrh_noagg_results(ring_ix,6) * 1000) ' uJ']);
+        disp(['    * Payloads per node (L_DPs): ' num2str(nrh_noagg_results(ring_ix,7)) ...
+            ' (' num2str(nrh_noagg_results(ring_ix,9)) ')']);
+        disp(['    * Max. payloads per node (L_DPs): ' num2str(nrh_noagg_results(ring_ix,8)) ...
+            ' (' num2str(get_num_packets(nrh_noagg_results(ring_ix,8),p_ratio)) ')']);
+        disp(['    * Configuration: P_opt = ' num2str(nrh_noagg_results(ring_ix,2)) ...
+            ' dBm (level ' num2str(nrh_noagg_results(ring_ix,3)) '/' num2str(length(P_LVL)) ...
+            ') - r_opt = ' num2str(nrh_noagg_results(ring_ix,4) / 1000) ...
+            ' Kbps (level ' num2str(nrh_noagg_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
+        disp(['    * Energy cons.: E_tx = ' num2str(nrh_noagg_results(ring_ix,1) * 1000) ...
+            ' uJ - E_rx = ' num2str(nrh_noagg_results(ring_ix,6) * 1000) ' uJ']);
     end
     disp(' ');
     disp('  · Summary:')
@@ -229,12 +249,18 @@ if display_oh
     disp('- OPTIMAL-HOP');
     disp(['  · Optimal delta configuration: ' num2str(optimal_diverse_delta_conf)]);
     for ring_ix = 1:num_rings
-        disp(['    * Ring ' num2str(ring_ix) ' (d = ' num2str(d_ring(ring_ix)) ' m): ']);
+        disp(['  · Ring ' num2str(ring_ix) ' (d = ' num2str(d_ring(ring_ix)) ' m): ']);
         disp(['    * Destination ring: ' num2str(oh_results(ring_ix,10))]);
-        disp(['    * Payloads per node (L_DPs): ' num2str(oh_results(ring_ix,7)) ' (' num2str(oh_results(ring_ix,9)) ')']);
-        disp(['    * Max. payloads per node (L_DPs): ' num2str(oh_results(ring_ix,8)) ' (' num2str(get_num_packets(oh_results(ring_ix,8),p_ratio)) ')']);
-        disp(['    * Configuration: P_opt = ' num2str(oh_results(ring_ix,2)) ' dBm (level ' num2str(oh_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' num2str(oh_results(ring_ix,4) / 1000) ' Kbps (level ' num2str(oh_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
-        disp(['    * Energy cons.: E_tx = ' num2str(oh_results(ring_ix,1) * 1000) ' uJ - E_rx = ' num2str(oh_results(ring_ix,6) * 1000) ' uJ']);
+        disp(['    * Payloads per node (L_DPs): ' num2str(oh_results(ring_ix,7)) ' (' ...
+            num2str(oh_results(ring_ix,9)) ')']);
+        disp(['    * Max. payloads per node (L_DPs): ' num2str(oh_results(ring_ix,8)) ...
+            ' (' num2str(get_num_packets(oh_results(ring_ix,8),p_ratio)) ')']);
+        disp(['    * Configuration: P_opt = ' num2str(oh_results(ring_ix,2)) ' dBm (level ' ...
+            num2str(oh_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' ...
+            num2str(oh_results(ring_ix,4) / 1000) ' Kbps (level ' num2str(oh_results(ring_ix,5)) '/' ...
+            num2str(length(R_LVL)) ')']);
+        disp(['    * Energy cons.: E_tx = ' num2str(oh_results(ring_ix,1) * 1000) ' uJ - E_rx = ' ...
+            num2str(oh_results(ring_ix,6) * 1000) ' uJ']);
         disp(['    * L_DPs received: ' num2str(oh_results(ring_ix,11))]);
     end
     disp(' ');
@@ -251,10 +277,16 @@ if display_oh_noagg
     for ring_ix = 1:num_rings
         disp(['  · Ring ' num2str(ring_ix) ' (d = ' num2str(d_ring(ring_ix)) ' m): ']);
         disp(['    * Destination ring: ' num2str(oh_noagg_results(ring_ix,10))]);
-        disp(['    * Payloads per node (L_DPs): ' num2str(oh_noagg_results(ring_ix,7)) ' (' num2str(oh_noagg_results(ring_ix,9)) ')']);
-        disp(['    * Max. payloads per node (L_DPs): ' num2str(oh_noagg_results(ring_ix,8)) ' (' num2str(get_num_packets(oh_noagg_results(ring_ix,8),p_ratio)) ')']);
-        disp(['    * Configuration: P_opt = ' num2str(oh_noagg_results(ring_ix,2)) ' dBm (level ' num2str(oh_noagg_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' num2str(oh_noagg_results(ring_ix,4) / 1000) ' Kbps (level ' num2str(oh_noagg_results(ring_ix,5)) '/' num2str(length(R_LVL)) ')']);
-        disp(['    * Energy cons.: E_tx = ' num2str(oh_noagg_results(ring_ix,1) * 1000) ' uJ - E_rx = ' num2str(oh_noagg_results(ring_ix,6) * 1000) ' uJ']);
+        disp(['    * Payloads per node (L_DPs): ' num2str(oh_noagg_results(ring_ix,7)) ...
+            ' (' num2str(oh_noagg_results(ring_ix,9)) ')']);
+        disp(['    * Max. payloads per node (L_DPs): ' num2str(oh_noagg_results(ring_ix,8)) ...
+            ' (' num2str(get_num_packets(oh_noagg_results(ring_ix,8),p_ratio)) ')']);
+        disp(['    * Configuration: P_opt = ' num2str(oh_noagg_results(ring_ix,2)) ' dBm (level ' ...
+            num2str(oh_noagg_results(ring_ix,3)) '/' num2str(length(P_LVL)) ') - r_opt = ' ...
+            num2str(oh_noagg_results(ring_ix,4) / 1000) ' Kbps (level ' num2str(oh_noagg_results(ring_ix,5)) ...
+            '/' num2str(length(R_LVL)) ')']);
+        disp(['    * Energy cons.: E_tx = ' num2str(oh_noagg_results(ring_ix,1) * 1000) ' uJ - E_rx = ' ...
+            num2str(oh_noagg_results(ring_ix,6) * 1000) ' uJ']);
     end
     disp(' ');
     disp('  · Summary:')
@@ -262,7 +294,8 @@ if display_oh_noagg
     disp(['    * Overall energy cons.: ' num2str(sum((oh_noagg_results(:,1)+oh_noagg_results(:,6))'.* n)) ' mJ']);
 end
 
-disp(['  · Optimal-hop bottleneck improvement against single / Next: ' num2str(sh_btle_e/oh_btle_e) ' ' num2str(nrh_btle_e/oh_btle_e)])
+disp(['  · Optimal-hop bottleneck improvement against single / Next: ' num2str(sh_btle_e/oh_btle_e) ' ' ...
+    num2str(nrh_btle_e/oh_btle_e)])
 disp(['  · Optimal-hop bottleneck improvement against no aggregation: ' num2str(oh_noagg_btle_e/oh_btle_e)])
 
 
@@ -272,17 +305,17 @@ disp(['  · Optimal-hop bottleneck improvement against no aggregation: ' num2str(
 % Flags for ploting
 
 % Routing modes energy consumption
-plot_e_per_node = true;
+plot_e_per_node = false;
 plot_network_tx_e = false;
-plot_network_total_e = true;
-plot_bottlenecks_e = true;
+plot_network_total_e = false;
+plot_bottlenecks_e = false;
 
 % Aggregation vs no aggregation
-plot_e_per_node_nrh_aggregation = true;
-plot_e_per_node_oh_aggregation = true;
+plot_e_per_node_nrh_aggregation = false;
+plot_e_per_node_oh_aggregation = false;
 % All routings (with/out aggregation)
-plot_e_per_node_all = true;
-plot_e_per_node_single_fair_agg = true;
+plot_e_per_node_all = false;
+plot_e_per_node_single_fair_agg = false;
 
 if(plot_e_per_node || plot_network_tx_e || plot_network_total_e || plot_bottlenecks_e...
         || plot_e_per_node_nrh_aggregation || plot_e_per_node_oh_aggregation || plot_e_per_node_all)
@@ -328,7 +361,8 @@ if plot_e_per_node
     ax3 = subplot(1,3,3);
     y = [(sh_results(1,1)+sh_results(1,6)) (nrh_results(1,1)+nrh_results(1,6)) (oh_results(1,1)+oh_results(1,6))];
     for ring_ix = 2:num_rings
-        y = [y; [(sh_results(ring_ix,1)+sh_results(ring_ix,6)) (nrh_results(ring_ix,1)+nrh_results(ring_ix,6)) (oh_results(ring_ix,1)+oh_results(ring_ix,6))]];
+        y = [y; [(sh_results(ring_ix,1)+sh_results(ring_ix,6)) (nrh_results(ring_ix,1)+nrh_results(ring_ix,6)) ...
+            (oh_results(ring_ix,1)+oh_results(ring_ix,6))]];
     end
     h_tx_node = bar(y);
     colormap(summer(3));
@@ -364,7 +398,8 @@ end
 if plot_network_total_e
     % Network total energy
     figure
-    y = [(sh_results(:,1)+sh_results(:,6))' .* n; (nrh_results(:,1)+nrh_results(:,6))'.* n; (oh_results(:,1)+oh_results(:,6))'.* n];
+    y = [(sh_results(:,1)+sh_results(:,6))' .* n; (nrh_results(:,1)+nrh_results(:,6))'.* n; ...
+        (oh_results(:,1)+oh_results(:,6))'.* n];
     y_casCAS = y;
     B = bar(y./1000,'stacked');
     set(gca, 'XTick',1:3, 'XTickLabel',{'Single-hop' 'Next-ring-hop' 'Optimal-hop'})
@@ -383,12 +418,14 @@ end
 if plot_bottlenecks_e
     % Bottlenecks
     figure
-    y = [sh_btle_e nrh_btle_e oh_btle_e; sh_results(sh_btle_ix,1) nrh_results(nrh_btle_ix,1) oh_results(oh_btle_ix,1); sh_results(sh_btle_ix,6) nrh_results(nrh_btle_ix,6) oh_results(oh_btle_ix,6)];
+    y = [sh_btle_e nrh_btle_e oh_btle_e; sh_results(sh_btle_ix,1) nrh_results(nrh_btle_ix,1) oh_results(oh_btle_ix,1); ...
+        sh_results(sh_btle_ix,6) nrh_results(nrh_btle_ix,6) oh_results(oh_btle_ix,6)];
     h_total_node = bar(y);
     colormap(summer(3));
     grid on
     l = cell(1,3);
-    l{1}=(['Single-hop: ' num2str(sh_btle_ix)]); l{2}=['Next-ring-hop: ' num2str(nrh_btle_ix)]; l{3}=['Optimal-hop: ' num2str(oh_btle_ix)];
+    l{1}=(['Single-hop: ' num2str(sh_btle_ix)]); l{2}=['Next-ring-hop: ' num2str(nrh_btle_ix)]; l{3}=['Optimal-hop: ' ...
+        num2str(oh_btle_ix)];
     legend(h_total_node,l);
     % title('Bottleneck energy consumption')
     set(gca,'XTickLabel',{'Total', 'TX', 'RX'})
@@ -434,7 +471,8 @@ if plot_e_per_node_nrh_aggregation
     ax3 = subplot(1,3,3);
     y = [(nrh_results(1,1)+nrh_results(1,6)) (nrh_noagg_results(1,1)+nrh_noagg_results(1,6))];
     for ring_ix = 2:num_rings
-        y = [y; [(nrh_results(ring_ix,1)+nrh_results(ring_ix,6)) (nrh_noagg_results(ring_ix,1)+nrh_noagg_results(ring_ix,6))]];
+        y = [y; [(nrh_results(ring_ix,1)+nrh_results(ring_ix,6)) (nrh_noagg_results(ring_ix,1) + ...
+            nrh_noagg_results(ring_ix,6))]];
     end
     h_tx_node = bar(y);
     colormap(summer(2));
@@ -488,7 +526,8 @@ if plot_e_per_node_oh_aggregation
     ax3 = subplot(1,3,3);
     y = [(oh_results(1,1)+oh_results(1,6)) (oh_noagg_results(1,1)+oh_noagg_results(1,6))];
     for ring_ix = 2:num_rings
-        y = [y; [(oh_results(ring_ix,1)+oh_results(ring_ix,6)) (oh_noagg_results(ring_ix,1)+oh_noagg_results(ring_ix,6))]];
+        y = [y; [(oh_results(ring_ix,1)+oh_results(ring_ix,6)) (oh_noagg_results(ring_ix,1) + ...
+            oh_noagg_results(ring_ix,6))]];
     end
     h_tx_node = bar(y);
     colormap(summer(2));
@@ -510,7 +549,8 @@ if plot_e_per_node_all
     % TX energy per node plot
     y = [sh_results(1,1) nrh_results(1,1) nrh_noagg_results(1,1) oh_results(1,1) oh_noagg_results(1,1)];
     for ring_ix = 2:num_rings
-        y = [y; [sh_results(ring_ix,1) nrh_results(ring_ix,1) nrh_noagg_results(ring_ix,1) oh_results(ring_ix,1) oh_noagg_results(ring_ix,1)]];
+        y = [y; [sh_results(ring_ix,1) nrh_results(ring_ix,1) nrh_noagg_results(ring_ix,1) oh_results(ring_ix,1) ...
+            oh_noagg_results(ring_ix,1)]];
     end
     h_total_node = bar(y);
     colormap(summer(5));
@@ -526,7 +566,8 @@ if plot_e_per_node_all
     % RX energy per node plot
     y = [sh_results(1,6) nrh_results(1,6) nrh_noagg_results(1,6) oh_results(1,6) oh_noagg_results(1,6)];
     for ring_ix = 2:num_rings
-        y = [y; [sh_results(ring_ix,6) nrh_results(ring_ix,6) nrh_noagg_results(ring_ix,6) oh_results(ring_ix,6) oh_noagg_results(ring_ix,6)]];
+        y = [y; [sh_results(ring_ix,6) nrh_results(ring_ix,6) nrh_noagg_results(ring_ix,6) oh_results(ring_ix,6) ...
+            oh_noagg_results(ring_ix,6)]];
     end
     h_total_node = bar(y);
     colormap(summer(5));
@@ -540,9 +581,12 @@ if plot_e_per_node_all
     
     % Total energy per node plot
     ax3 = subplot(1,3,3);
-    y = [(sh_results(1,1)+sh_results(1,6)) (nrh_results(1,1)+nrh_results(1,6)) (nrh_noagg_results(1,1)+nrh_noagg_results(1,6)) (oh_results(1,1)+oh_results(1,6)) (oh_noagg_results(1,1)+oh_noagg_results(1,6))];
+    y = [(sh_results(1,1)+sh_results(1,6)) (nrh_results(1,1)+nrh_results(1,6)) (nrh_noagg_results(1,1) + ...
+        nrh_noagg_results(1,6)) (oh_results(1,1)+oh_results(1,6)) (oh_noagg_results(1,1)+oh_noagg_results(1,6))];
     for ring_ix = 2:num_rings
-        y = [y; [(sh_results(ring_ix,1)+sh_results(ring_ix,6)) (nrh_results(ring_ix,1)+nrh_results(ring_ix,6)) (nrh_noagg_results(ring_ix,1)+nrh_noagg_results(ring_ix,6)) (oh_results(ring_ix,1)+oh_results(ring_ix,6)) (oh_noagg_results(ring_ix,1)+oh_noagg_results(ring_ix,6))]];
+        y = [y; [(sh_results(ring_ix,1)+sh_results(ring_ix,6)) (nrh_results(ring_ix,1)+nrh_results(ring_ix,6)) ...
+            (nrh_noagg_results(ring_ix,1)+nrh_noagg_results(ring_ix,6)) (oh_results(ring_ix,1)+oh_results(ring_ix,6)) ...
+            (oh_noagg_results(ring_ix,1)+oh_noagg_results(ring_ix,6))]];
     end
     h_tx_node = bar(y);
     colormap(summer(5));
@@ -595,9 +639,11 @@ if plot_e_per_node_single_fair_agg
     
     % Total energy per node plot
     ax3 = subplot(1,3,3);
-    y = [(sh_results(1,1)+sh_results(1,6)) (oh_noagg_results(1,1)+oh_noagg_results(1,6)) (oh_results(1,1)+oh_results(1,6))];
+    y = [(sh_results(1,1)+sh_results(1,6)) (oh_noagg_results(1,1)+oh_noagg_results(1,6)) ...
+        (oh_results(1,1)+oh_results(1,6))];
     for ring_ix = 2:num_rings
-        y = [y; [(sh_results(ring_ix,1)+sh_results(ring_ix,6)) (oh_noagg_results(ring_ix,1)+oh_noagg_results(ring_ix,6)) (oh_results(ring_ix,1)+oh_results(ring_ix,6))]];
+        y = [y; [(sh_results(ring_ix,1)+sh_results(ring_ix,6)) (oh_noagg_results(ring_ix,1) + ...
+            oh_noagg_results(ring_ix,6)) (oh_results(ring_ix,1)+oh_results(ring_ix,6))]];
     end
     h_tx_node = bar(y);
     colormap(summer(3));

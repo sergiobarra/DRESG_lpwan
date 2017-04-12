@@ -7,8 +7,8 @@
 %%% transmission configuration. Different routing links may be proposed
 %%% depending on the input DRESG topology.
 
-function [ fair_optimal_conf, optimal_delta_conf ] = fair_optimal_tx_conf(aggregation_on)
-% fair_optimal_tx_conf returns 2 parameters corresponding to the best TX
+function [ fair_optimal_conf, optimal_delta_conf ] = optimal_routing_and_tx_conf(aggregation_on)
+% optimal_routing_and_tx_conf returns 2 parameters corresponding to the best TX
 % configuration and routing links (hops) for the fair-hop routing mode
 %   Arguments:
 %   - aggregation_on: aggregation flag
@@ -17,31 +17,33 @@ function [ fair_optimal_conf, optimal_delta_conf ] = fair_optimal_tx_conf(aggreg
 %   - optimal_delta_conf: optimal delta values for each ring
 
 load('configuration.mat')
-balanced_results = zeros(num_delta_combinations, num_rings, 10);
+balanced_results = zeros(num_delta_combinations, num_rings, RESULTS_NUM_ELEMENTS);
 % disp('  · progress: 0%')
 for delta_conf_ix = 1:num_delta_combinations
     
     % delta_combinations(delta_conf,:)
     balanced_ring_links = zeros(num_rings,num_rings); % Matrix containing link relations (hyerarchy) for composing a branch flow
     
-    for pow_ix = 1:num_rings
+    for ring_ix_aux = 1:num_rings
         
-        ring_ix = num_rings - pow_ix + 1;
+        ring_ix = num_rings - ring_ix_aux + 1;
         dest_ring = ring_ix - delta_combinations(delta_conf_ix,ring_ix);
+        
+        balanced_ring_links(ring_ix, ring_ix) = 1;
         
         if dest_ring > 0
             balanced_ring_links(dest_ring,:) = balanced_ring_links(dest_ring,:) + balanced_ring_links(ring_ix,:);
             balanced_ring_links(dest_ring, ring_ix) = 1;
         end
     end
-    
+        
     balanced_num_hops = delta_combinations(delta_conf_ix,:);
     
     ring_dest = (1:num_rings) - balanced_num_hops;
        
     for aux_ix = 1:num_rings
         
-        ring = num_rings - aux_ix + 1;
+        ring = num_rings - aux_ix + 1;  % Start from the last ring
         D_max = zeros(length(P_LVL),length(R_LVL));     % Maximum distance matrix
         E_TX = zeros(length(P_LVL),length(R_LVL));      % TX consumption matrix for suitable configurations (else: 0)
         E_RX = zeros(length(P_LVL),length(R_LVL));      % RX consumption matrix for suitable configurations (else: 0)
@@ -51,15 +53,18 @@ for delta_conf_ix = 1:num_delta_combinations
         for pow_ix = 1:length(P_LVL)
             
             for rate_ix = 1:length(R_LVL)
+                
+                % Compute maximum communication range. Notice that the sensibility
+                % depends on the transmission rate (i.e., modulation).
                 D_max(pow_ix,rate_ix) = max_distance(prop_model, P_LVL(pow_ix), Grx, Gtx, S(rate_ix), f);
-            end
-            
-            for j = 1:length(R_LVL)
-                if D_max(pow_ix,j) >= d_ring(balanced_num_hops(ring))  % Link to correspondent parent ring
-                    r_aux = R_LVL(j);
+                
+                if D_max(pow_ix,rate_ix) >= d_ring(balanced_num_hops(ring))  % Link to correspondent parent ring
+                    
+                    r_aux = R_LVL(rate_ix);
                     % Transmission
                     ring_payloads_ix = find(balanced_ring_links(ring,:)==1);
-                    num_payloads = sum(n(ring_payloads_ix)) / n(ring) + 1;    % Max number of payload to be txd (subtree size)
+                    % num_payloads = sum(n(ring_payloads_ix)) / n(ring) + 1;    % Max number of payload to be txd (subtree size)
+                    num_payloads = sum(n(ring_payloads_ix)) / n(ring);    % Max number of payload to be txd (subtree size)
                     max_num_payloads = num_payloads;
                     % num_dfs_tx = ceil(num_payloads / p_ratio);  % Padding taken into account
                     
@@ -71,7 +76,7 @@ for delta_conf_ix = 1:num_delta_combinations
                     end
                     ring_load = num_payloads;
                     t_tx = (num_packets * L_DP * 8) / r_aux;
-                    E_TX(pow_ix,j) = t_tx * (I_LVL(pow_ix) * V);
+                    E_TX(pow_ix,rate_ix) = t_tx * (I_LVL(pow_ix) * V);
                     
                     % Reception
                     t_rx = 0;
@@ -81,18 +86,19 @@ for delta_conf_ix = 1:num_delta_combinations
                             link_children_ratio = n(source_ring_ix)/n(ring);
                             num_dfs_per_child =  balanced_results(delta_conf_ix, source_ring_ix, 9);
                             dfs_received = dfs_received + link_children_ratio * num_dfs_per_child;
-                            t_rx = t_rx + (link_children_ratio * num_dfs_per_child * L_DP * 8) / R_LVL(balanced_results(delta_conf_ix, source_ring_ix, 5));
+                            t_rx = t_rx + (link_children_ratio * num_dfs_per_child * L_DP * 8) / ... 
+                                R_LVL(balanced_results(delta_conf_ix, source_ring_ix, RESULTS_IX_R_LVL));
                         end
                     end;
-                    E_RX(pow_ix,j) = t_rx * I_rx * V;
+                    E_RX(pow_ix,rate_ix) = t_rx * I_rx * V;
                     
-                    if (E_TX(pow_ix,j)+E_RX(pow_ix,j)) < E_opt % Optimize the transmission energy
+                    if (E_TX(pow_ix,rate_ix)+E_RX(pow_ix,rate_ix)) < E_opt % Optimize the transmission energy
                         P_opt = P_LVL(pow_ix);
                         ix_P = pow_ix;
-                        r_opt = R_LVL(j);
-                        ix_r = j;
-                        E_tx = E_TX(pow_ix,j);
-                        E_rx = E_RX(pow_ix,j);
+                        r_opt = R_LVL(rate_ix);
+                        ix_r = rate_ix;
+                        E_tx = E_TX(pow_ix,rate_ix);
+                        E_rx = E_RX(pow_ix,rate_ix);
                         E_opt = E_tx + E_rx;
                         balanced_results(delta_conf_ix, ring, 1) = E_tx;
                         balanced_results(delta_conf_ix, ring, 2) = P_opt;
