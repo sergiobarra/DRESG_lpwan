@@ -27,15 +27,15 @@ if display_dresg_configuration
     disp('- DRESG deployment and scenario configuration:');
     
     disp('  · Physical parameters:');
-    disp(['    - Propagation model: ' prop_model_str]);
+    disp(['    - propagation model: ' prop_model_str]);
     disp(['    - frequency =  ' num2str(f/(10^6)) ' MHz  (lambda = ' num2str(lambda) ' m)']);
-    disp(['    - TX power output: Pt_{min} =  ' num2str(min(P_LVL)) ' dBm  Pt_{max} = ' num2str(max(P_LVL)) ' dBm']);
-    disp(['    - No = ' num2str(No) ' dBm']);
+    disp(['    - transmission power output: Pt_{min} =  ' num2str(min(P_LVL)) ' dBm  Pt_{max} = ' num2str(max(P_LVL)) ' dBm']);
+    disp(['    - noise = ' num2str(No) ' dBm']);
     disp(['    - max. distance =  ' num2str(d_max) ' m']);
     disp('  · Hardware paremeters:');
-    disp(['    - Transceiver model:  ' transceiver_model_str]);
+    disp(['    - transceiver model:  ' transceiver_model_str]);
     disp('  · Network parameters:');
-    disp(['    - Fix packet length =  ' num2str(L_DP) ' B']);
+    disp(['    - fixed packet length =  ' num2str(L_DP) ' B']);
     disp(['    - header length =  ' num2str(L_header) ' B']);
     disp(['    - payload length =  ' num2str(L_payload) ' B']);
     disp(['    - Max. payloads per L_DP (payload ratio) =  ' num2str(p_ratio)]);
@@ -50,7 +50,6 @@ if display_dresg_configuration
     end
     disp(' ')
 end
-
 
 
 %% IDENTIFY OF OPTIMAL CONFIGURATIONS
