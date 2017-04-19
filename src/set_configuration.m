@@ -11,7 +11,7 @@ clc
 clear
 close all
 
-%% Fix constants (DO NOT CHANGE THIS!)
+%% Fixed constants (DO NOT CHANGE THIS!)
 ROUTING_MODEL_SINGLE_HOP = 0;       % Single-hop routing model
 ROUTING_MODEL_NEXT_RING_HOP = 1;    % Next-ring-hop routing model
 ROUTING_MODEL_OPTIMAL_HOP = 2;      % Optimal-hop routing model
@@ -41,6 +41,10 @@ PROPAGATION_MODEL_PICO = 2;         % 802.11 Pico/hotzone propagation model
 RING_SPREAD_MODEL_EQUIDISTANT = 0;          % Equidistant ring spread model
 RING_SPREAD_MODEL_FIBONACCI = 1;            % Fibonacci ring spread model
 RING_SPREAD_MODEL_INVERSE_FIBONACCI = 2;    % Inverse Fibonacci ring spread model
+
+% Learning: https://en.wikipedia.org/wiki/Multi-armed_bandit
+EPSILON_GREEDY_STRATEGY = 0;
+EPSILON_GREEDY_DECREASING = 1;
 
 %% Main configuration parameters (EDITABLE)
 

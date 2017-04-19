@@ -1,32 +1,23 @@
-function [ actions_history ] = ... 
-        learn_optimal_routing( max_num_iterations, set_of_ring_hops_combinations, aggregation_on, learning_approach, d_ring )
+function [ actions_history, reward_per_arm ] = ... 
+        learn_optimal_routing( max_num_iterations, set_of_ring_hops_combinations, d_ring, aggregation_on,...
+        epsilon_initial, epsilon_tunning_mode)
     %LEARN_OPTIMAL_ROUTING applies learning for identfying an optimal (or
     %pseudo-optimal) ring hops combination
     %   Detailed explanation goes here
+    % Output:
+    %   - actions_history: array containing the action, the bottleneck
+    %   energy when performing such action, and the bottleneck ring.
+    %   Elements: iteration x (action, e_bt, ring_bt)
     
-    % At the moment just consider e-greedy learning approach
-    
-%     switch learning_approach
-%         
-%         case 0
-% 
-%         otherwise
-%             error('Learning approach unkown!')
-%     
-%     end
-
     load('configuration.mat')
 
-    % Learning tunning parameters
-    epsilon_initial = 0.2;
+   
 
     num_possible_arms = size(set_of_ring_hops_combinations, 1);
-    
-    disp(['- num_possible_arms ' num2str(num_possible_arms)])
 
     reward_per_arm = ones(1,num_possible_arms) .* -1;
     
-    actions_history = zeros(max_num_iterations, 3);
+    actions_history = zeros(max_num_iterations, 3); 
 
     iteration = 1;
 
@@ -35,7 +26,7 @@ function [ actions_history ] = ...
     disp('  · progress: 0%')
     while(iteration <= max_num_iterations) 
         
-        % disp(['- iteration ' num2str(iteration)])
+        %disp(['- iteration ' num2str(iteration)])
 
         % Pick a ring hops combination (i.e., arm)
         selected_arm = select_action_greedy(reward_per_arm, epsilon);
@@ -51,17 +42,23 @@ function [ actions_history ] = ...
 
         actions_history(iteration, :) = [selected_arm btle_e btle_ix];
         
-        % epsilon = epsilon_initial / sqrt(iteration);    
-        epsilon = epsilon_initial;
+        switch epsilon_tunning_mode
+            case EPSILON_GREEDY_STRATEGY
+                epsilon = epsilon_initial;
+            case EPSILON_GREEDY_DECREASING
+                epsilon = epsilon_initial / sqrt(iteration);  
+            otherwise
+                error('Unkown epsilon-greedy tunning mode!')
+        end
+          
+        % epsilon = epsilon_initial;
+                
+        if mod(iteration, max_num_iterations/20) == 0
+            disp(['  · progress: ' num2str(floor(iteration*100 / max_num_iterations)) '%'])
+        end
         
         % Increase the number of 'learning iterations' of a WLAN
         iteration = iteration + 1; 
-        
-        if(iteration == max_num_iterations)
-        disp('  · progress: 100 %')
-        else
-        disp(['  · progress: ' num2str(ceil(iteration*100 / max_num_iterations)) '%'])
-        end
         
     end
     

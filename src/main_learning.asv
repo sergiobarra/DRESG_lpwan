@@ -1,0 +1,38 @@
+close all
+clear
+clc
+
+load('configuration.mat')
+% NEW LEARNING ---> To be placed in other file!
+max_num_iterations = 100;
+set_of_ring_hops_combinations = delta_combinations;
+aggregation_on = false;
+learning_approach = 0;
+
+num_possible_arms = size(set_of_ring_hops_combinations, 1);
+    
+disp(['- num_possible_arms ' num2str(num_possible_arms)]);
+
+actions_history = learn_optimal_routing( max_num_iterations, set_of_ring_hops_combinations, aggregation_on, ...
+    learning_approach, d_ring );
+
+% Plot evolution of consumption (should decrease with time)
+figure
+plot((1:max_num_iterations)', (actions_history(:,2))');
+title('Learning with \epsilon - greedy')
+xlabel('time [iterations]')
+ylabel('Bottleneck energy [mJ]')
+
+% Actions histogram
+actions_selected = actions_history(:,1)';
+
+figure
+histogram(actions_selected, num_possible_arms)
+title('Histogram of actions selected')
+xlabel('Action index')
+ylabel('Number of times picked')
+
+% Display some parameters per console
+most_picked_arm = mode(A)
+
+save('learning.mat')

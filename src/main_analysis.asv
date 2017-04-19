@@ -22,13 +22,14 @@ load('configuration.mat')   % Load configuration into local workspace
 
 % Display and plot flags
 
-display_dresg_configuration = false;    % Print DRESG configuration? (0: No, 1: Yes)
+display_dresg_configuration = true;    % Print DRESG configuration? (0: No, 1: Yes)
 % Flags for displaying routing modes results
-display_sh = false;
-display_nrh = false;
-display_nrh_noagg = false;
+display_sh = f;
+display_nrh = true;
+display_nrh_noagg = true;
 display_oh = true;
-display_oh_noagg = false;
+display_oh_noagg = true;
+
 
 if display_dresg_configuration
 
