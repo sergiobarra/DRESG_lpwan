@@ -4,35 +4,108 @@ clc
 
 load('configuration.mat')
 % NEW LEARNING ---> To be placed in other file!
-max_num_iterations = 100;
+max_num_iterations = 10;
 set_of_ring_hops_combinations = delta_combinations;
-aggregation_on = false;
+aggregation_on = true;
 learning_approach = 0;
 
-num_possible_arms = size(set_of_ring_hops_combinations, 1);
+num_possible_actions = size(set_of_ring_hops_combinations, 1);  % Number of possible paths
     
-disp(['- num_possible_arms ' num2str(num_possible_arms)]);
+disp(['- num_possible_arms ' num2str(num_possible_actions)]);
 
-actions_history = learn_optimal_routing( max_num_iterations, set_of_ring_hops_combinations, aggregation_on, ...
-    learning_approach, d_ring );
+ % Learning tunning parameters
+epsilon_initial = [0.1 0.3 0.5 0.8];
+
+
+for epsilon_ix = 1:length(epsilon_initial)
+    
+    epsilon_tunning_mode = EPSILON_GREEDY_STRATEGY;
+    [actions_history_constant(epsilon_ix,:,:,:), reward_per_action_constant(epsilon_ix,:,:,:)] = ...
+        learn_optimal_routing( max_num_iterations, set_of_ring_hops_combinations,...
+        d_ring, aggregation_on, epsilon_initial(epsilon_ix), epsilon_tunning_mode );
+
+    epsilon_tunning_mode = EPSILON_GREEDY_DECREASING;
+    [actions_history_decreasing(epsilon_ix,:,:,:), reward_per_action_decreasing(epsilon_ix,:,:,:)] = ...
+        learn_optimal_routing( max_num_iterations, set_of_ring_hops_combinations,...
+        d_ring, aggregation_on, epsilon_initial(epsilon_ix), epsilon_tunning_mode );
+    
+end
+
+
+% GREEDY CONSTANT statistics
+% Statistics
+actions_selected_constant = actions_history_constant(:,1)';
+most_picked_ation_constant = mode(actions_selected_constant);
+num_unexplored_actions_constant = length(find(reward_per_action_constant == -1));
+num_explored_actions_constant = num_possible_actions - num_unexplored_actions_constant;
+
+% Display some parameters per console
+disp('Results GREEDY CONSTANT:')
+for epsilon_ix = 1:length(epsilon_initial)
+    disp(['- \epsilon = ' num2str(epsilon_initial(epsilon_ix))])
+    disp(['  · Most picked action: ' num2str(most_picked_ation_constant)])
+    disp(set_of_ring_hops_combinations(most_picked_ation_constant, :))
+    disp(['  - Num. of explored actions: ' num2str(num_explored_actions_constant)])
+    disp(['- Num. of unexplored actions: ' num2str(num_unexplored_actions_constant)])
+end
+
+
+% GREEDY CONSTANT statistics
+% Statistics
+actions_selected_decreasing = actions_history_decreasing(:,1)';
+most_picked_ation_decreasing = mode(actions_selected_decreasing);
+num_unexplored_actions_decreasing = length(find(reward_per_action_decreasing == -1));
+num_explored_actions_decreasing = num_possible_actions - num_unexplored_actions_decreasing;
+
+% Display some parameters per console
+disp('Results GREEDY decreasing:')
+disp(['- Most picked action: ' num2str(most_picked_ation_decreasing)])
+disp(set_of_ring_hops_combinations(most_picked_ation_decreasing, :))
+disp(['- Num. of explored actions: ' num2str(num_explored_actions_decreasing)])
+disp(['- Num. of unexplored actions: ' num2str(num_unexplored_actions_decreasing)])
+
 
 % Plot evolution of consumption (should decrease with time)
 figure
-plot((1:max_num_iterations)', (actions_history(:,2))');
+for epsilon_ix = 1:length(epsilon_initial)
+    plot((1:max_num_iterations)', (actions_history_constant(epsilon_ix,:,2))');
+end
+title('Learning with CONSTANT \epsilon - greedy')
+xlabel('time [iterations]')
+ylabel('Bottleneck energy [mJ]')
+legend('\epsilon = 0.1', '\epsilon = 0.3', '\epsilon = 0.5', '\epsilon = 0.8');
+
+figure
+hold on
+for epsilon_ix = 1:length(epsilon_initial)
+    plot((1:max_num_iterations)', (actions_history_decreasing(epsilon_ix,:,2))');
+end
+title('Learning with DECREASING \epsilon - greedy')
+xlabel('time [iterations]')
+ylabel('Bottleneck energy [mJ]')
+legend('\epsilon = 0.1', '\epsilon = 0.3', '\epsilon = 0.5', '\epsilon = 0.8');
+
+figure
+hold on
+for epsilon_ix = 1:length(epsilon_initial)
+    plot((1:max_num_iterations)', (actions_history_constant(epsilon_ix,:,2))');
+end
+for epsilon_ix = 1:length(epsilon_initial)
+    plot((1:max_num_iterations)', (actions_history_decreasing(epsilon_ix,:,2))');
+end
 title('Learning with \epsilon - greedy')
 xlabel('time [iterations]')
 ylabel('Bottleneck energy [mJ]')
+legend('\epsilon_{cnt} = 0.1', '\epsilon_{cnt} = 0.3', '\epsilon_{cnt} = 0.5', '\epsilon_{cnt} = 0.8',...
+    '\epsilon_{dec} = 0.1', '\epsilon_{dec} = 0.3', '\epsilon_{dec} = 0.5', '\epsilon_{dec} = 0.8');
 
-% Actions histogram
-actions_selected = actions_history(:,1)';
-
-figure
-histogram(actions_selected, num_possible_arms)
-title('Histogram of actions selected')
-xlabel('Action index')
-ylabel('Number of times picked')
-
-% Display some parameters per console
-most_picked_arm = mode(A)
+% % Actions histogram
+% actions_selected_constant = actions_history(:,1)';
+% 
+% figure
+% histogram(actions_selected_constant, num_possible_actions)
+% title('Histogram of actions selected')
+% xlabel('Action index')
+% ylabel('Number of times picked')
 
 save('learning.mat')

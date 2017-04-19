@@ -1,6 +1,6 @@
-function [ actions_history, reward_per_arm ] = ... 
+function [ actions_history, reward_per_arm, iteration_optimal_action ] = ... 
         learn_optimal_routing( max_num_iterations, set_of_ring_hops_combinations, d_ring, aggregation_on,...
-        epsilon_initial, epsilon_tunning_mode)
+        epsilon_initial, epsilon_tunning_mode, optimal_action)
     %LEARN_OPTIMAL_ROUTING applies learning for identfying an optimal (or
     %pseudo-optimal) ring hops combination
     %   Detailed explanation goes here
@@ -23,13 +23,19 @@ function [ actions_history, reward_per_arm ] = ...
 
     epsilon = epsilon_initial;
     
-    disp('  · progress: 0%')
+    iteration_optimal_action = 0;   % Iteration where optimal action was found
+    
+    disp(['    - learning optimal routing for epsilon ' num2str(epsilon_initial) ' and mode ' num2str(epsilon_tunning_mode)])
     while(iteration <= max_num_iterations) 
         
         %disp(['- iteration ' num2str(iteration)])
 
         % Pick a ring hops combination (i.e., arm)
         selected_arm = select_action_greedy(reward_per_arm, epsilon);
+        
+        if selected_arm == optimal_action && iteration_optimal_action == 0
+            iteration_optimal_action = iteration;
+        end
         
         ring_hops_combination = set_of_ring_hops_combinations(selected_arm,:);
                 
@@ -53,8 +59,8 @@ function [ actions_history, reward_per_arm ] = ...
           
         % epsilon = epsilon_initial;
                 
-        if mod(iteration, max_num_iterations/20) == 0
-            disp(['  · progress: ' num2str(floor(iteration*100 / max_num_iterations)) '%'])
+        if mod(iteration, max_num_iterations/10) == 0
+            disp(['      · progress: ' num2str(floor(iteration*100 / max_num_iterations)) '%'])
         end
         
         % Increase the number of 'learning iterations' of a WLAN

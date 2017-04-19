@@ -48,8 +48,8 @@ EPSILON_GREEDY_DECREASING = 1;
 
 %% Main configuration parameters (EDITABLE)
 
-num_rings = 7;                     % Num of rings of the DRESG deployment (a.k.a R)
-child_ratio = 3;                    % Num of children of STAs not belonging to the last ring
+num_rings = 3;                     % Num of rings of the DRESG deployment (a.k.a R)
+child_ratio = 2;                    % Num of children of STAs not belonging to the last ring
 spread_model = RING_SPREAD_MODEL_EQUIDISTANT;   % Equidistant, fibonacci or reverse fibonnaci
 transceiver_model = TRANSCEIVER_MODEL_CC1200;   % Transceiver model (0: CC1100, 1: CC1200, 2: si4464 (SigFox))
 
