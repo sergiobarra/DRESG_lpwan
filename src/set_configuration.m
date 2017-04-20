@@ -43,15 +43,18 @@ RING_SPREAD_MODEL_FIBONACCI = 1;            % Fibonacci ring spread model
 RING_SPREAD_MODEL_INVERSE_FIBONACCI = 2;    % Inverse Fibonacci ring spread model
 
 % Learning: https://en.wikipedia.org/wiki/Multi-armed_bandit
-EPSILON_GREEDY_STRATEGY = 0;
+EPSILON_GREEDY_CONSTANT = 0;
 EPSILON_GREEDY_DECREASING = 1;
 
 %% Main configuration parameters (EDITABLE)
 
+plot_topology = false;               % Flag for plotting the DRESG topology. Too crowded LPWANs may not be properly represented.
+plot_ring_spread = false;            % Flag for plotting the ring locations
+
 num_rings = 3;                     % Num of rings of the DRESG deployment (a.k.a R)
 child_ratio = 2;                    % Num of children of STAs not belonging to the last ring
 spread_model = RING_SPREAD_MODEL_EQUIDISTANT;   % Equidistant, fibonacci or reverse fibonnaci
-transceiver_model = TRANSCEIVER_MODEL_CC1200;   % Transceiver model (0: CC1100, 1: CC1200, 2: si4464 (SigFox))
+transceiver_model = TRANSCEIVER_MODEL_CC1200;   % Transceiver model
 
 L_DP = 65;                          % Fixed data packet length [Bytes]
 L_payload = 15;                     % Fixed payload length [Bytes]
@@ -65,9 +68,6 @@ Gtx = 0;                            % Transmitter gaint [dBi]
 No = -200.93;                       % Noise power density
 prop_model = PROPAGATION_MODEL_URBAN_MACRO; % Propagation model
 fibo_stress = 1;                    % First fibonnaci number to consider
-
-plot_topology = false;               % Flag for plotting the DRESG topology. Too crowded LPWANs may not be properly represented.
-plot_ring_spread = false;            % Flag for plotting the ring locations
 
 
 %%  Load configuration parameters

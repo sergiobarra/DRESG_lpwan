@@ -4,13 +4,14 @@
 %%% arXiv preprint arXiv:1611.08703, 2016.
 %%%
 %%% File description: get optimal transmission configuration for a given
-%%% ring hops combination. Suitable for single-hop, multi-hop and other
-%%% combinations.
+%%% ring hops combination. Suitable for single-hop, multi-hop and any other
+%%% hops combinations.
 
-function [btle_e, btle_ix, connectivity_matrix, ring_dest_array, results] = ...
+function [e, btle_e, btle_ix, connectivity_matrix, ring_dest_array, results] = ...
         general_optimal_tx_conf(ring_hops_combination, aggregation_on, d_ring)
 
     % general_optimal_tx_conf returns ...
+    %   - e = array representing the energy consumed by each ring
 %   - ring_hops_combination: array representing the hop lenght of each ring
 
     load('configuration.mat')
@@ -108,6 +109,7 @@ function [btle_e, btle_ix, connectivity_matrix, ring_dest_array, results] = ...
         end
     end
     
-    [btle_e, btle_ix] = max(results(:,RESULTS_IX_ENERGY_TX) + results(:,RESULTS_IX_ENERGY_RX));
+    e = results(:,RESULTS_IX_ENERGY_TX) + results(:,RESULTS_IX_ENERGY_RX);
+    [btle_e, btle_ix] = max(e);
     
 end
