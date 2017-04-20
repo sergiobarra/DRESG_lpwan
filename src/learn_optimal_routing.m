@@ -1,4 +1,4 @@
-function [ blte_history, energy_history, reward_per_arm, iteration_optimal_action, iteration_all_actions_explored ] = ... 
+function [action_history, reward_per_arm, statistics ] = ... 
         learn_optimal_routing( max_num_iterations, set_of_ring_hops_combinations, d_ring, aggregation_on,...
         epsilon_initial, epsilon_tunning_mode, optimal_action )
     %LEARN_OPTIMAL_ROUTING applies learning for identfying an optimal (or
@@ -15,19 +15,15 @@ function [ blte_history, energy_history, reward_per_arm, iteration_optimal_actio
 
     num_possible_arms = size(set_of_ring_hops_combinations, 1);
 
+    action_history = []; % Array of structures containning the action history and corresponding energy values
     reward_per_arm = ones(1,num_possible_arms) .* -1;
-    
-    blte_history = zeros(max_num_iterations, 3);
-    energy_history = zeros(max_num_iterations, num_rings);
-
-    iteration = 1;
-
-    epsilon = epsilon_initial;
-    
+    % statistics = struct([]);
     iteration_optimal_action = 0;   % Iteration where optimal action was found
     iteration_all_actions_explored = 0;   % Iteration where optimal action was found
     
-    disp(['    - learning optimal routing for epsilon ' num2str(epsilon_initial) ' and mode ' num2str(epsilon_tunning_mode)])
+    %disp(['    - learning optimal routing for epsilon ' num2str(epsilon_initial) ' and mode ' num2str(epsilon_tunning_mode)])
+    epsilon = epsilon_initial;
+    iteration = 1;
     while(iteration <= max_num_iterations) 
         
         %disp(['- iteration ' num2str(iteration)])
@@ -53,9 +49,6 @@ function [ blte_history, energy_history, reward_per_arm, iteration_optimal_actio
             iteration_all_actions_explored = iteration;
         end
 
-        blte_history(iteration, :) = [selected_arm btle_e btle_ix];
-        energy_history(iteration, :) = e';
-        disp(energy_history(iteration, :))
         
         switch epsilon_tunning_mode
             case EPSILON_GREEDY_CONSTANT
@@ -66,10 +59,17 @@ function [ blte_history, energy_history, reward_per_arm, iteration_optimal_actio
                 error('Unkown epsilon-greedy tunning mode!')
         end
           
-        % epsilon = epsilon_initial;
-                
+        action_history(iteration).iteration = iteration;
+        action_history(iteration).action = selected_arm;
+        action_history(iteration).rings_e = e';
+        action_history(iteration).btle_e = btle_e;
+        action_history(iteration).btle_ix = btle_ix;
+        
+        statistics.iteration_optimal = iteration_optimal_action;
+        statistics.iteration_explored = iteration_all_actions_explored;
+                        
         if mod(iteration, max_num_iterations/10) == 0
-            disp(['      · progress: ' num2str(floor(iteration*100 / max_num_iterations)) '%'])
+            %disp(['      · progress: ' num2str(floor(iteration*100 / max_num_iterations)) '%'])
         end
         
         % Increase the number of 'learning iterations' of a WLAN
