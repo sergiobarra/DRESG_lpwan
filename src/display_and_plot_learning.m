@@ -1,12 +1,12 @@
 %% Load workspace if necessary
-mat_filename = 'r3_c2_i1000_t1000.mat';
+%mat_filename = 'r3_c2_i1000_t1000.mat';
 % Load just the required variables (avoid loading variables with high memory size)
-load(mat_filename,'epsilon_initial','num_explored_actions_constant_mean','num_possible_actions',...
-    'num_unexplored_actions_constant_mean','mean_iteration_optimal_constant','mean_iteration_all_constant',...
-    'num_explored_actions_decreasing_mean', 'num_unexplored_actions_decreasing_mean',...
-    'mean_iteration_optimal_decreasing', 'mean_iteration_all_decreasing','num_epsilons',...
-    'max_cum_mean_rings_e_constant','max_cum_mean_rings_e_decreasing','num_rings','child_ratio',...
-    'mean_btle_e_constant', 'mean_btle_e_decreasing','num_iterations')
+% load(mat_filename,'epsilon_initial','num_explored_actions_constant_mean','num_possible_actions',...
+%     'num_unexplored_actions_constant_mean','mean_iteration_optimal_constant','mean_iteration_all_constant',...
+%     'num_explored_actions_decreasing_mean', 'num_unexplored_actions_decreasing_mean',...
+%     'mean_iteration_optimal_decreasing', 'mean_iteration_all_decreasing','num_epsilons',...
+%     'max_cum_mean_rings_e_constant','max_cum_mean_rings_e_decreasing','num_rings','child_ratio',...
+%     'mean_btle_e_constant', 'mean_btle_e_decreasing','num_iterations','statistics_constant','statistics_decreasing')
 
 %% Display results and plots
 
@@ -72,6 +72,30 @@ title_string = strcat('Bottleneck energy with \epsilon - greedy (DRESG: R= ',...
 title(title_string)
 xlabel('time [iterations]')
 ylabel('Bottleneck energy [mJ]')
+legend(legend_both_epsilons);
+
+
+%% CDFs
+figure
+hold on
+for epsilon_ix = 1:num_epsilons
+    cdfplot(([statistics_constant(:, epsilon_ix).iteration_optimal]));
+    cdfplot(([statistics_decreasing(:, epsilon_ix).iteration_optimal]));
+end
+title('CDF of the iteration where the optimal action is found')
+xlabel('time [iterations]')
+ylabel('F(X)')
+legend(legend_both_epsilons);
+
+figure
+hold on
+for epsilon_ix = 1:num_epsilons
+    cdfplot(([statistics_constant(:, epsilon_ix).iteration_explored]));
+    cdfplot(([statistics_decreasing(:, epsilon_ix).iteration_explored]));
+end
+title('CDF of the iteration where all the action are explored')
+xlabel('time [iterations]')
+ylabel('F(X)')
 legend(legend_both_epsilons);
 
 % % Actions histogram

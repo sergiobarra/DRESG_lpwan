@@ -69,7 +69,7 @@ function [action_history, reward_per_arm, statistics ] = ...
         statistics.iteration_explored = iteration_all_actions_explored;
                         
         if mod(iteration, max_num_iterations/10) == 0
-            disp(['      · progress: ' num2str(floor(iteration*100 / max_num_iterations)) '%'])
+            %disp(['      · progress: ' num2str(floor(iteration*100 / max_num_iterations)) '%'])
         end
         
         % Increase the number of 'learning iterations' of a WLAN
