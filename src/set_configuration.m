@@ -48,7 +48,7 @@ EPSILON_GREEDY_DECREASING = 1;
 
 %% Main configuration parameters (EDITABLE)
 
-plot_topology = false;               % Flag for plotting the DRESG topology. Too crowded LPWANs may not be properly represented.
+plot_topology = true;               % Flag for plotting the DRESG topology. Too crowded LPWANs may not be properly represented.
 plot_ring_spread = false;            % Flag for plotting the ring locations
 
 num_rings = 3;                     % Num of rings of the DRESG deployment (a.k.a R)

@@ -65,9 +65,18 @@ function [action_history, reward_per_arm, statistics ] = ...
         action_history(iteration).btle_e = btle_e;
         action_history(iteration).btle_ix = btle_ix;
         
-        statistics.iteration_optimal = iteration_optimal_action;
-        statistics.iteration_explored = iteration_all_actions_explored;
-                        
+        if iteration_optimal_action == 0
+             statistics.iteration_optimal = inf;
+        else
+             statistics.iteration_optimal = iteration_optimal_action;
+        end
+        
+        if iteration_all_actions_explored == 0
+             statistics.iteration_explored = inf;
+        else
+             statistics.iteration_explored = iteration_all_actions_explored;
+        end
+     
         if mod(iteration, max_num_iterations/10) == 0
             %disp(['      · progress: ' num2str(floor(iteration*100 / max_num_iterations)) '%'])
         end

@@ -1,0 +1,45 @@
+Results GREEDY CONSTANT:
+- epsilon = 0.2
+  · Explored actions: 6/6
+  · Iteration where ALL actions were explored: 26.328/1000
+     + Num. trials where all actions were explored: 1000/1000 (100 %)
+  · Iteration where OPTIMAL action was picked: 13.826/1000
+     + Num. trials where optimal actions was picked: 1000/1000 (100 %)
+--------------------------------------------------------------------
+- epsilon = 0.5
+  · Explored actions: 6/6
+  · Iteration where ALL actions were explored: 10.931/1000
+     + Num. trials where all actions were explored: 1000/1000 (100 %)
+  · Iteration where OPTIMAL action was picked: 6.001/1000
+     + Num. trials where optimal actions was picked: 1000/1000 (100 %)
+--------------------------------------------------------------------
+- epsilon = 1
+  · Explored actions: 6/6
+  · Iteration where ALL actions were explored: 6/1000
+     + Num. trials where all actions were explored: 1000/1000 (100 %)
+  · Iteration where OPTIMAL action was picked: 3.502/1000
+     + Num. trials where optimal actions was picked: 1000/1000 (100 %)
+--------------------------------------------------------------------
+ 
+Results GREEDY DECREASING:
+- epsilon = 0.2
+  · Explored actions: 6/6
+  · Iteration where ALL actions were explored: 46.19/1000
+     + Num. trials where all actions were explored: 1000/1000 (100 %)
+  · Iteration where OPTIMAL action was picked: 19.302/1000
+     + Num. trials where optimal actions was picked: 1000/1000 (100 %)
+--------------------------------------------------------------------
+- epsilon = 0.5
+  · Explored actions: 6/6
+  · Iteration where ALL actions were explored: 20.967/1000
+     + Num. trials where all actions were explored: 1000/1000 (100 %)
+  · Iteration where OPTIMAL action was picked: 9.218/1000
+     + Num. trials where optimal actions was picked: 1000/1000 (100 %)
+--------------------------------------------------------------------
+- epsilon = 1
+  · Explored actions: 6/6
+  · Iteration where ALL actions were explored: 11.404/1000
+     + Num. trials where all actions were explored: 1000/1000 (100 %)
+  · Iteration where OPTIMAL action was picked: 4.971/1000
+     + Num. trials where optimal actions was picked: 1000/1000 (100 %)
+--------------------------------------------------------------------

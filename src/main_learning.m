@@ -11,9 +11,10 @@ learning_approach = 0;
 
 %% Learning configuration
 
-num_trials = 500;             % Number of trials for averaging
+save_results = 0;           % Save results flag for generating a .mat file
+num_trials = 25;             % Number of trials for averaging
 num_iterations = 50;         % Number of learning iterations
-epsilon_initial = [0.5 1];  % Learning tunning parameters
+epsilon_initial = [0.2 1];  % Learning tunning parameters
 num_epsilons = length(epsilon_initial);
 optimal_action = 1;         % Known optimal action (by main_analysis.m)
 battery_energy = 10000;
@@ -139,6 +140,10 @@ max_cum_mean_rings_e_decreasing = zeros(num_epsilons, num_iterations);
 
 num_unexplored_actions_constant = zeros(num_trials, num_epsilons);
 num_unexplored_actions_decreasing = zeros(num_trials, num_epsilons);
+times_all_explored_constant = zeros(num_epsilons, 1);
+times_all_explored_decreasing = zeros(num_epsilons, 1);
+times_optimal_explored_constant = zeros(num_epsilons, 1);
+times_optimal_explored_decreasing = zeros(num_epsilons, 1);
 
 for epsilon_ix = 1:num_epsilons
     
@@ -160,6 +165,24 @@ for trial_ix = 1:num_trials
         sum_iteration_optimal_decreasing(1, epsilon_ix) = sum_iteration_optimal_decreasing(1, epsilon_ix) + statistics_decreasing(trial_ix, epsilon_ix).iteration_optimal;
         sum_iteration_all_decreasing(1, epsilon_ix) = sum_iteration_all_decreasing(1, epsilon_ix) + statistics_decreasing(trial_ix, epsilon_ix).iteration_explored;
     
+        if statistics_constant(trial_ix, epsilon_ix).iteration_optimal ~= inf
+            times_all_explored_constant(epsilon_ix) = times_all_explored_constant(epsilon_ix) + 1;
+        end 
+        
+        if statistics_decreasing(trial_ix, epsilon_ix).iteration_optimal ~= inf
+            times_all_explored_decreasing(epsilon_ix) = times_all_explored_decreasing(epsilon_ix) + 1;
+        end
+        
+        if statistics_constant(trial_ix, epsilon_ix).iteration_explored ~= inf
+            times_optimal_explored_constant(epsilon_ix) = times_optimal_explored_constant(epsilon_ix) + 1;
+        end 
+        
+        if statistics_decreasing(trial_ix, epsilon_ix).iteration_explored ~= inf
+            times_optimal_explored_decreasing(epsilon_ix) = times_optimal_explored_decreasing(epsilon_ix) + 1;
+        end
+        
+        
+        
     end        
     
 end
@@ -174,8 +197,10 @@ num_explored_actions_constant_mean = num_possible_actions - num_unexplored_actio
 num_unexplored_actions_decreasing_mean = mean(num_unexplored_actions_decreasing(:,epsilon_ix));
 num_explored_actions_decreasing_mean = num_possible_actions - num_unexplored_actions_decreasing_mean;
 
+if save_results
+    save(mat_filename)
+end
 
-save(mat_filename)
 
 %% Displays and plots
 
