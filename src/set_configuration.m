@@ -1,6 +1,6 @@
 %%% "Distance-Ring Exponential Stations Generator (DRESG) for LPWANs"
 %%% Author: Sergio Barrachina (sergio.barrachina@upf.edu)
-%%% More info at S. Barrachina, B. Bellalta, T. Adame, and A. Bel, “Multi-hop Communication in the Uplink for LPWANs,” 
+%%% More info at S. Barrachina, B. Bellalta, T. Adame, and A. Bel, ?Multi-hop Communication in the Uplink for LPWANs,? 
 %%% arXiv preprint arXiv:1611.08703, 2016.
 %%%
 %%% File description: script for setting the DRESG configuration for
@@ -48,11 +48,11 @@ EPSILON_GREEDY_DECREASING = 1;
 
 %% Main configuration parameters (EDITABLE)
 
-plot_topology = true;               % Flag for plotting the DRESG topology. Too crowded LPWANs may not be properly represented.
+plot_topology = false;               % Flag for plotting the DRESG topology. Too crowded LPWANs may not be properly represented.
 plot_ring_spread = false;            % Flag for plotting the ring locations
 
-num_rings = 3;                     % Num of rings of the DRESG deployment (a.k.a R)
-child_ratio = 2;                    % Num of children of STAs not belonging to the last ring
+num_rings = 4;                     % Num of rings of the DRESG deployment (a.k.a R)
+child_ratio = 12;                    % Num of children of STAs not belonging to the last ring
 spread_model = RING_SPREAD_MODEL_EQUIDISTANT;   % Equidistant, fibonacci or reverse fibonnaci
 transceiver_model = TRANSCEIVER_MODEL_CC1200;   % Transceiver model
 

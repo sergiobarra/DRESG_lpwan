@@ -22,11 +22,11 @@ disp('Results GREEDY CONSTANT:')
 for epsilon_ix = 1:length(epsilon_initial)
     
     disp(['- epsilon = ' num2str(epsilon_initial(epsilon_ix))])    
-    disp(['  · Explored actions: ' num2str(num_explored_actions_constant_mean) '/' num2str(num_possible_actions)])
-    disp(['  · Iteration where ALL actions were explored: ' num2str(mean_iteration_all_constant(epsilon_ix)) '/' num2str(num_iterations)])
+    disp(['  * Explored actions: ' num2str(num_explored_actions_constant_mean) '/' num2str(num_possible_actions)])
+    disp(['  * Iteration where ALL actions were explored: ' num2str(mean_iteration_all_constant(epsilon_ix)) '/' num2str(num_iterations)])
     disp(['     + Num. trials where all actions were explored: ' num2str(times_optimal_explored_constant(epsilon_ix))...
         '/' num2str(num_trials) ' (' num2str(times_optimal_explored_constant(epsilon_ix)*100/num_trials) ' %)'])
-    disp(['  · Iteration where OPTIMAL action was picked: ' num2str(mean_iteration_optimal_constant(epsilon_ix)) '/' num2str(num_iterations)])
+    disp(['  * Iteration where OPTIMAL action was picked: ' num2str(mean_iteration_optimal_constant(epsilon_ix)) '/' num2str(num_iterations)])
     disp(['     + Num. trials where optimal actions was picked: ' num2str(times_all_explored_constant(epsilon_ix))...
         '/' num2str(num_trials) ' (' num2str(times_all_explored_constant(epsilon_ix)*100/num_trials) ' %)'])
     disp('--------------------------------------------------------------------')
@@ -38,11 +38,11 @@ disp('Results GREEDY DECREASING:')
 for epsilon_ix = 1:length(epsilon_initial)
     
     disp(['- epsilon = ' num2str(epsilon_initial(epsilon_ix))])    
-    disp(['  · Explored actions: ' num2str(num_explored_actions_decreasing_mean) '/' num2str(num_possible_actions)])
-    disp(['  · Iteration where ALL actions were explored: ' num2str(mean_iteration_all_decreasing(epsilon_ix)) '/' num2str(num_iterations)])
+    disp(['  * Explored actions: ' num2str(num_explored_actions_decreasing_mean) '/' num2str(num_possible_actions)])
+    disp(['  * Iteration where ALL actions were explored: ' num2str(mean_iteration_all_decreasing(epsilon_ix)) '/' num2str(num_iterations)])
     disp(['     + Num. trials where all actions were explored: ' num2str(times_optimal_explored_decreasing(epsilon_ix))...
         '/' num2str(num_trials) ' (' num2str(times_optimal_explored_decreasing(epsilon_ix)*100/num_trials) ' %)'])
-    disp(['  · Iteration where OPTIMAL action was picked: ' num2str(mean_iteration_optimal_decreasing(epsilon_ix)) '/' num2str(num_iterations)])
+    disp(['  * Iteration where OPTIMAL action was picked: ' num2str(mean_iteration_optimal_decreasing(epsilon_ix)) '/' num2str(num_iterations)])
     disp(['     + Num. trials where optimal actions was picked: ' num2str(times_all_explored_decreasing(epsilon_ix))...
         '/' num2str(num_trials) ' (' num2str(times_all_explored_decreasing(epsilon_ix)*100/num_trials) ' %)'])
     disp('--------------------------------------------------------------------')
