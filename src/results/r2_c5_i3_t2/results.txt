@@ -1,0 +1,51 @@
+*** Results GREEDY CONSTANT ***
+- epsilon = 0.20
+  * Explored actions: 2.00/2
+  * Iteration where ALL actions were explored: Inf/3
+     + Num. trials where all actions were explored: 1/2 (50.00 %)
+  * Iteration where OPTIMAL action was picked: 1.00
+  * Iteration where OPTIMAL action was picked: 3.00
+     + Num. trials where optimal actions was picked: 2.00/2 (100.00 %)
+--------------------------------------------------------------------
+- epsilon = 0.50
+  * Explored actions: 2.00/2
+  * Iteration where ALL actions were explored: 2.00/3
+     + Num. trials where all actions were explored: 2/2 (100.00 %)
+  * Iteration where OPTIMAL action was picked: 1.50
+  * Iteration where OPTIMAL action was picked: 3.00
+     + Num. trials where optimal actions was picked: 2.00/2 (100.00 %)
+--------------------------------------------------------------------
+- epsilon = 1.00
+  * Explored actions: 2.00/2
+  * Iteration where ALL actions were explored: 2.00/3
+     + Num. trials where all actions were explored: 2/2 (100.00 %)
+  * Iteration where OPTIMAL action was picked: 1.50
+  * Iteration where OPTIMAL action was picked: 3.00
+     + Num. trials where optimal actions was picked: 2.00/2 (100.00 %)
+--------------------------------------------------------------------
+
+*** Results GREEDY DECREASING ***
+- epsilon = 0.20
+  * Explored actions: 2.00/2
+  * Iteration where ALL actions were explored: Inf/3
+     + Num. trials where all actions were explored: 1/2 (50.00 %)
+  * Iteration where OPTIMAL action was picked: Inf
+  * Iteration where OPTIMAL action was picked: 3.00
+     + Num. trials where optimal actions was picked: 1.00/2 (50.00 %)
+--------------------------------------------------------------------
+- epsilon = 0.50
+  * Explored actions: 2.00/2
+  * Iteration where ALL actions were explored: Inf/3
+     + Num. trials where all actions were explored: 1/2 (50.00 %)
+  * Iteration where OPTIMAL action was picked: 1.00
+  * Iteration where OPTIMAL action was picked: 3.00
+     + Num. trials where optimal actions was picked: 2.00/2 (100.00 %)
+--------------------------------------------------------------------
+- epsilon = 1.00
+  * Explored actions: 2.00/2
+  * Iteration where ALL actions were explored: 2.00/3
+     + Num. trials where all actions were explored: 2/2 (100.00 %)
+  * Iteration where OPTIMAL action was picked: 1.50
+  * Iteration where OPTIMAL action was picked: 3.00
+     + Num. trials where optimal actions was picked: 2.00/2 (100.00 %)
+--------------------------------------------------------------------

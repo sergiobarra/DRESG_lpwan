@@ -11,18 +11,19 @@ learning_approach = 0;
 
 %% Learning configuration
 
-save_results = true;           % Save results flag for generating a .mat file
+save_mat_file = true;           % Save results flag for generating a .mat file
+display_results = true;
 num_trials = 2;             % Number of trials for averaging
 num_iterations = 3;         % Number of learning iterations
 epsilon_initial = [0.2 0.5 1];  % Learning tunning parameters
 num_epsilons = length(epsilon_initial);
-optimal_action = 645;         % Known optimal action (by main_analysis.m)
+optimal_action = 1;         % Known optimal action (by main_analysis.m)
 battery_energy = 10000;
 
 num_possible_actions = size(set_of_ring_hops_combinations, 1);  % Number of possible paths
 
-mat_filename = strcat('r', num2str(num_rings), '_c', num2str(child_ratio), '_i', num2str(num_iterations),...
-    '_t', num2str(num_trials), '.mat');
+output_root_filename = strcat(pwd,'/results/r', num2str(num_rings), '_c', num2str(child_ratio), '_i', num2str(num_iterations),...
+    '_t', num2str(num_trials), '/');
     
 disp('DRESG topology: ')
 disp([' - Children ratio: ' num2str(child_ratio)]);
@@ -32,7 +33,7 @@ disp([' - Optimal hops combination (obtained by main analysis): ' num2str(optima
 disp(set_of_ring_hops_combinations(optimal_action,:))
 
 disp('Learning configuration: ')
-disp([' - Save results? ' num2str(save_results)]);
+disp([' - Save .mat file? ' num2str(save_mat_file)]);
 disp([' - Num. of experiment repitions (i.e. trials): ' num2str(num_trials)]);
 disp([' - Num. of learning iterations: ' num2str(num_iterations)]);
 disp([' - Num. of algorithms to test: ' num2str(num_epsilons)]);
@@ -207,15 +208,19 @@ num_explored_actions_constant_mean = num_possible_actions - num_unexplored_actio
 num_unexplored_actions_decreasing_mean = mean(num_unexplored_actions_decreasing(:,epsilon_ix));
 num_explored_actions_decreasing_mean = num_possible_actions - num_unexplored_actions_decreasing_mean;
 
-if save_results
-    save(mat_filename)
-    disp(['Results saved in file ' mat_filename])
+if save_mat_file
+    mkdir(output_root_filename)
+    filename_aux = strcat(output_root_filename, 'output.mat');
+    save(filename_aux)
+    disp(['Results saved in file ' filename_aux])
 end
 
 %% Displays and plots
 
 % Call script for displaying results
-%display_and_plot_learning
+if display_results
+    display_and_plot_learning
+end
 
 %% Finish
 exec_time = toc;

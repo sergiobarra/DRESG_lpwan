@@ -1,10 +1,10 @@
 %% Load workspace if necessary
 
-% clear 
-% close all
-% clc
-% 
-% mat_filename = 'r7_c3_i20000_t25.mat';
+save_figures = true;
+save_info = true;
+
+% mat_filename = 'results/r4_c8_i2000_t1000.mat';
+% % output_root_filename = 'results/r4_c8_i2000_t1000/';
 % % Load just the required variables (avoid loading variables with high memory size)
 % load(mat_filename,'epsilon_initial','num_explored_actions_constant_mean','num_possible_actions',...
 %     'num_unexplored_actions_constant_mean','mean_iteration_optimal_constant','mean_iteration_all_constant',...
@@ -12,7 +12,8 @@
 %     'mean_iteration_optimal_decreasing', 'mean_iteration_all_decreasing','num_epsilons',...
 %     'max_cum_mean_rings_e_constant','max_cum_mean_rings_e_decreasing','num_rings','child_ratio',...
 %     'mean_btle_e_constant', 'mean_btle_e_decreasing','num_iterations','statistics_constant','statistics_decreasing',...
-%     'num_trials','times_all_explored_constant','times_all_explored_decreasing')
+%     'num_trials','times_all_explored_constant','times_all_explored_decreasing','times_optimal_explored_decreasing',...
+%     'times_optimal_explored_constant')
 
 %% Display results and plots
 
@@ -46,8 +47,48 @@ for epsilon_ix = 1:length(epsilon_initial)
     disp(['     + Num. trials where optimal actions was picked: ' num2str(times_all_explored_decreasing(epsilon_ix))...
         '/' num2str(num_trials) ' (' num2str(times_all_explored_decreasing(epsilon_ix)*100/num_trials) ' %)'])
     disp('--------------------------------------------------------------------')
+    
+end
 
-  
+% Write logs
+if save_info
+    
+    filename_aux = strcat(output_root_filename, 'results.txt');
+    fileID = fopen(filename_aux,'w');
+    
+    fprintf(fileID,'*** Results GREEDY CONSTANT ***\n');
+    
+    for epsilon_ix = 1:length(epsilon_initial)
+
+        fprintf(fileID,'- epsilon = %.2f\n', epsilon_initial(epsilon_ix));
+        fprintf(fileID,'  * Explored actions: %.2f/%d\n', num_explored_actions_constant_mean, num_possible_actions);
+        fprintf(fileID,'  * Iteration where ALL actions were explored: %.2f/%d\n', mean_iteration_all_constant(epsilon_ix), num_iterations);
+        fprintf(fileID,'     + Num. trials where all actions were explored: %d/%d (%.2f %%)\n', times_optimal_explored_constant(epsilon_ix),...
+            num_trials, times_optimal_explored_constant(epsilon_ix)*100/num_trials);
+        fprintf(fileID,'  * Iteration where OPTIMAL action was picked: %.2f\n', mean_iteration_optimal_constant(epsilon_ix),...
+            num_iterations);
+        fprintf(fileID,'     + Num. trials where optimal actions was picked: %.2f/%d (%.2f %%)\n', times_all_explored_constant(epsilon_ix), ...
+            num_trials, times_all_explored_constant(epsilon_ix)*100/num_trials);
+        fprintf(fileID,'--------------------------------------------------------------------\n');
+
+    end
+
+    fprintf(fileID,'\n*** Results GREEDY DECREASING ***\n');
+    
+    for epsilon_ix = 1:length(epsilon_initial)
+
+        fprintf(fileID,'- epsilon = %.2f\n', epsilon_initial(epsilon_ix));
+        fprintf(fileID,'  * Explored actions: %.2f/%d\n', num_explored_actions_decreasing_mean, num_possible_actions);
+        fprintf(fileID,'  * Iteration where ALL actions were explored: %.2f/%d\n', mean_iteration_all_decreasing(epsilon_ix), num_iterations);
+        fprintf(fileID,'     + Num. trials where all actions were explored: %d/%d (%.2f %%)\n', times_optimal_explored_decreasing(epsilon_ix),...
+            num_trials, times_optimal_explored_decreasing(epsilon_ix)*100/num_trials);
+        fprintf(fileID,'  * Iteration where OPTIMAL action was picked: %.2f\n', mean_iteration_optimal_decreasing(epsilon_ix),...
+            num_iterations);
+        fprintf(fileID,'     + Num. trials where optimal actions was picked: %.2f/%d (%.2f %%)\n', times_all_explored_decreasing(epsilon_ix), ...
+            num_trials, times_all_explored_decreasing(epsilon_ix)*100/num_trials);
+        fprintf(fileID,'--------------------------------------------------------------------\n');
+
+    end
 end
 
 %% PLOTS
@@ -59,6 +100,7 @@ for epsilon_ix = 1:length(epsilon_initial)
     legend_both_epsilons{epsilon_ix + length(epsilon_initial)} = strcat('\epsilon_{dec}: ', num2str(epsilon_initial(epsilon_ix)));
 end
 
+% Consumption
 figure
 hold on
 for epsilon_ix = 1:num_epsilons
@@ -74,6 +116,12 @@ xlabel('time [iterations]')
 ylabel('Cummulated consumption [mJ]')
 legend(legend_both_epsilons);
 
+if save_figures
+    filename_aux = strcat(output_root_filename, 'consumption.fig');
+    savefig(filename_aux)
+end
+
+% Bottleneck energy
 figure
 hold on
 for epsilon_ix = 1:num_epsilons
@@ -89,9 +137,12 @@ xlabel('time [iterations]')
 ylabel('Bottleneck energy [mJ]')
 legend(legend_both_epsilons);
 
+if save_figures
+   filename_aux = strcat(output_root_filename, 'bottleneck.fig');
+    savefig(filename_aux)
+end
 
-%% CDFs
-
+% CDF optimal iteration
 figure
 hold on
 for epsilon_ix = 1:num_epsilons
@@ -104,6 +155,13 @@ title('CDF of the iteration where the optimal action is found')
 xlabel('time [iterations]')
 ylabel('F(X)')
 legend(legend_both_epsilons);
+
+if save_figures
+    filename_aux = strcat(output_root_filename, 'cdf_optimal.fig');
+    savefig(filename_aux)
+end
+
+% CDF all-explored iteration
 
 figure
 hold on
@@ -118,11 +176,7 @@ xlabel('time [iterations]')
 ylabel('F(X)')
 legend(legend_both_epsilons);
 
-% % Actions histogram
-% actions_selected_constant = actions_history(:,1)';
-% 
-% figure
-% histogram(actions_selected_constant, num_possible_actions)
-% title('Histogram of actions selected')
-% xlabel('Action index')
-% ylabel('Number of times picked')
+if save_figures
+    filename_aux = strcat(output_root_filename, 'cdf_allexplored.fig');
+    savefig(filename_aux)
+end
