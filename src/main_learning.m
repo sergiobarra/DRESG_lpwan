@@ -11,14 +11,18 @@ learning_approach = 0;
 
 %% Learning configuration
 
-save_mat_file = true;           % Save results flag for generating a .mat file
-display_results = true;
+save_mat_file = false;           % Save results flag for generating a .mat file
+display_results = false;
 num_trials = 2;             % Number of trials for averaging
 num_iterations = 3;         % Number of learning iterations
 epsilon_initial = [0.2 0.5 1];  % Learning tunning parameters
 num_epsilons = length(epsilon_initial);
 optimal_action = 1;         % Known optimal action (by main_analysis.m)
 battery_energy = 10000;
+
+if ~save_mat_file
+    warning('ATENTION: RESULTS WILL NOT BE SAVED IN A .MAT FILE!')
+end
 
 num_possible_actions = size(set_of_ring_hops_combinations, 1);  % Number of possible paths
 
@@ -29,6 +33,7 @@ disp('DRESG topology: ')
 disp([' - Children ratio: ' num2str(child_ratio)]);
 disp([' - Num. of rings: ' num2str(num_rings)]);
 disp(['   * Num. of possible actions (i.e. paths) of the DRESG topology: ' num2str(num_possible_actions)]);
+disp([' - Num. of nodes: ' num2str(n_total)]);
 disp([' - Optimal hops combination (obtained by main analysis): ' num2str(optimal_action)]);
 disp(set_of_ring_hops_combinations(optimal_action,:))
 
@@ -209,7 +214,7 @@ num_unexplored_actions_decreasing_mean = mean(num_unexplored_actions_decreasing(
 num_explored_actions_decreasing_mean = num_possible_actions - num_unexplored_actions_decreasing_mean;
 
 if save_mat_file
-    mkdir(output_root_filename)
+    mkdir(output_root_filename);
     filename_aux = strcat(output_root_filename, 'output.mat');
     save(filename_aux)
     disp(['Results saved in file ' filename_aux])

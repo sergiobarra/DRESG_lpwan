@@ -1,12 +1,11 @@
-%%%% START HERE :P
 
-nWorkers = 2;
+nWorkers = 12;
 parpool('local', nWorkers)
-
-set_configuration
 
 load('configuration.mat')
 % NEW LEARNING ---> To be placed in other file!
+
+save_mat_file = true;           % Save results flag for generating a .mat file
 
 set_of_ring_hops_combinations = delta_combinations;
 aggregation_on = true;
@@ -16,10 +15,10 @@ learning_approach = 0;
 
 save_results = true;           % Save results flag for generating a .mat file
 num_trials = 1000;             % Number of trials for averaging
-num_iterations = 500;         % Number of learning iterations
+num_iterations = 12000;         % Number of learning iterations
 epsilon_initial = [0.2 0.5 1];  % Learning tunning parameters
 num_epsilons = length(epsilon_initial);
-optimal_action = 1;         % Known optimal action (by main_analysis.m)
+optimal_action = 645;         % Known optimal action (by main_analysis.m)
 battery_energy = 10000;
 
 num_possible_actions = size(set_of_ring_hops_combinations, 1);  % Number of possible paths
@@ -57,6 +56,8 @@ statistics_aux.iteration_optimal = 0;
 statistics_aux.iteration_explored = 0;
 statistics_constant(1:num_trials, 1:num_epsilons) = statistics_aux;
 statistics_decreasing(1:num_trials, 1:num_epsilons) = statistics_aux;
+
+nWorkers = 12;
 
 parfor (trial_ix=1:num_trials, nWorkers)
     
@@ -208,9 +209,9 @@ num_explored_actions_constant_mean = num_possible_actions - num_unexplored_actio
 num_unexplored_actions_decreasing_mean = mean(num_unexplored_actions_decreasing(:,epsilon_ix));
 num_explored_actions_decreasing_mean = num_possible_actions - num_unexplored_actions_decreasing_mean;
 
-if save_results
+if save_mat_file
     save(mat_filename)
-    disp(['Results saved in file ' mat_filename])
+    disp(['Results saved in file ' filename_aux])
 end
 
 %% Finish
