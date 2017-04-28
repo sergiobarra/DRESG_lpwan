@@ -13,10 +13,10 @@ learning_approach = 0;
 
 save_results = true;           % Save results flag for generating a .mat file
 num_trials = 2;             % Number of trials for averaging
-num_iterations = 2;         % Number of learning iterations
+num_iterations = 3;         % Number of learning iterations
 epsilon_initial = [0.2 0.5 1];  % Learning tunning parameters
 num_epsilons = length(epsilon_initial);
-optimal_action = 1;         % Known optimal action (by main_analysis.m)
+optimal_action = 645;         % Known optimal action (by main_analysis.m)
 battery_energy = 10000;
 
 num_possible_actions = size(set_of_ring_hops_combinations, 1);  % Number of possible paths
@@ -32,6 +32,7 @@ disp([' - Optimal hops combination (obtained by main analysis): ' num2str(optima
 disp(set_of_ring_hops_combinations(optimal_action,:))
 
 disp('Learning configuration: ')
+disp([' - Save results? ' num2str(save_results)]);
 disp([' - Num. of experiment repitions (i.e. trials): ' num2str(num_trials)]);
 disp([' - Num. of learning iterations: ' num2str(num_iterations)]);
 disp([' - Num. of algorithms to test: ' num2str(num_epsilons)]);
@@ -44,6 +45,17 @@ tic
 
 disp(' ')
 disp('Computing learning algorithms: ')
+
+all_action_history_constant = cell(num_trials, num_epsilons);
+all_action_history_decreasing = cell(num_trials, num_epsilons);
+
+reward_per_action_constant = zeros(num_trials, num_epsilons, num_possible_actions);
+reward_per_action_decreasing = zeros(num_trials, num_epsilons, num_possible_actions);
+
+statistics_aux.iteration_optimal = 0;
+statistics_aux.iteration_explored = 0;
+statistics_constant(1:num_trials, 1:num_epsilons) = statistics_aux;
+statistics_decreasing(1:num_trials, 1:num_epsilons) = statistics_aux;
 
 for trial_ix = 1:num_trials
     
@@ -181,8 +193,6 @@ for trial_ix = 1:num_trials
             times_optimal_explored_decreasing(epsilon_ix) = times_optimal_explored_decreasing(epsilon_ix) + 1;
         end
         
-        
-        
     end        
     
 end
@@ -205,7 +215,7 @@ end
 %% Displays and plots
 
 % Call script for displaying results
-display_and_plot_learning
+%display_and_plot_learning
 
 %% Finish
 exec_time = toc;
