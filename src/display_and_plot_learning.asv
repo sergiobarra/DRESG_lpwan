@@ -14,7 +14,7 @@ save_info = false;
 %     'max_cum_mean_rings_e_constant','max_cum_mean_rings_e_decreasing','num_rings','child_ratio',...
 %     'mean_btle_e_constant', 'mean_btle_e_decreasing','num_iterations','statistics_constant','statistics_decreasing',...
 %     'num_trials','times_all_explored_constant','times_all_explored_decreasing','times_optimal_explored_decreasing',...
-%     'times_optimal_explored_constant', 'max_cum_max_ring_e_constant', 'max_cum_max_ring_e_decreasing')
+%     'times_optimal_explored_constant')
 
 %% Display results and plots
 
@@ -182,19 +182,11 @@ if save_figures
     savefig(filename_aux)
 end
 
-figure
-hold on
-for epsilon_ix = 1:num_epsilons
-    plot(max_cum_max_ring_e_constant(epsilon_ix,:))
-end
-for epsilon_ix = 1:num_epsilons
-    plot(max_cum_max_ring_e_decreasing(epsilon_ix,:))
-end
-title('Max cummulated energy per ring')
-xlabel('time [iterations]')
-ylabel('e [mJ]')
-legend(legend_both_epsilons);
 
 
+
+
+
+max_cum_max_ring_e_constant
 
 

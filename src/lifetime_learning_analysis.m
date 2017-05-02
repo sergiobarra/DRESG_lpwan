@@ -15,6 +15,7 @@ load(mat_filename,'epsilon_initial','num_explored_actions_constant_mean','num_po
 
 energy_AAA = 5071;  % energy of AAA battery [J]
 energy_AA = 9630;   % energy of AA battery [J]
+energy_battery = 1 * energy_AA;
 
 for epsilon_ix = 1:length(epsilon_initial)
     legend_constant{epsilon_ix} = strcat('\epsilon_{cnt}: ', num2str(epsilon_initial(epsilon_ix)));
@@ -27,10 +28,10 @@ end
 figure
 hold on
 for epsilon_ix = 1:num_epsilons
-    plot(energy_AAA*1000 - max_cum_mean_rings_e_constant(epsilon_ix,:))
+    plot(energy_battery * 1000 - max_cum_mean_rings_e_constant(epsilon_ix,:))
 end
 for epsilon_ix = 1:num_epsilons
-    plot(energy_AAA*1000 - max_cum_mean_rings_e_decreasing(epsilon_ix,:))
+    plot(energy_battery * 1000 - max_cum_mean_rings_e_decreasing(epsilon_ix,:))
 end
 title_string = strcat('Lifetime with \epsilon - greedy (DRESG: R= ',...
     num2str(num_rings), ', c= ', num2str(child_ratio), ')');
