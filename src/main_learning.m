@@ -11,10 +11,10 @@ learning_approach = 0;
 
 %% Learning configuration
 
-save_mat_file = false;           % Save results flag for generating a .mat file
-display_results = false;
-num_trials = 2;             % Number of trials for averaging
-num_iterations = 3;         % Number of learning iterations
+save_mat_file = true;           % Save results flag for generating a .mat file
+display_results = true;
+num_trials = 1000;             % Number of trials for averaging
+num_iterations = 12000;         % Number of learning iterations
 epsilon_initial = [0.2 0.5 1];  % Learning tunning parameters
 num_epsilons = length(epsilon_initial);
 optimal_action = 1;         % Known optimal action (by main_analysis.m)
@@ -216,7 +216,7 @@ num_explored_actions_decreasing_mean = num_possible_actions - num_unexplored_act
 if save_mat_file
     mkdir(output_root_filename);
     filename_aux = strcat(output_root_filename, 'output.mat');
-    save(filename_aux)
+    save(filename_aux, '-v7.3')
     disp(['Results saved in file ' filename_aux])
 end
 

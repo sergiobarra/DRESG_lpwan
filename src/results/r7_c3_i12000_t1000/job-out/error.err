@@ -1,0 +1,19 @@
+{Error using eval
+Undefined function or variable 'nWorkers'.
+
+Error in main_learning_parfor (line 62)
+parfor (trial_ix=1:num_trials, nWorkers)
+
+
+Error in run (line 96)
+evalin('caller', [script ';']);
+} 
+{Undefined function or variable 'filename_aux'.
+
+Error in main_learning_parfor (line 214)
+    disp(['Results saved in file ' filename_aux])
+
+
+Error in run (line 96)
+evalin('caller', [script ';']);
+} 

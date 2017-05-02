@@ -15,10 +15,10 @@ learning_approach = 0;
 
 save_results = true;           % Save results flag for generating a .mat file
 num_trials = 1000;             % Number of trials for averaging
-num_iterations = 12000;         % Number of learning iterations
+num_iterations = 8000;         % Number of learning iterations
 epsilon_initial = [0.2 0.5 1];  % Learning tunning parameters
 num_epsilons = length(epsilon_initial);
-optimal_action = 645;         % Known optimal action (by main_analysis.m)
+optimal_action = 1;         % Known optimal action (by main_analysis.m)
 battery_energy = 10000;
 
 num_possible_actions = size(set_of_ring_hops_combinations, 1);  % Number of possible paths
@@ -210,7 +210,7 @@ num_unexplored_actions_decreasing_mean = mean(num_unexplored_actions_decreasing(
 num_explored_actions_decreasing_mean = num_possible_actions - num_unexplored_actions_decreasing_mean;
 
 if save_mat_file
-    save(mat_filename)
+    save(mat_filename, '-v7.3')
     disp(['Results saved in file ' filename_aux])
 end
 

@@ -51,8 +51,8 @@ EPSILON_GREEDY_DECREASING = 1;
 plot_topology = false;               % Flag for plotting the DRESG topology. Too crowded LPWANs may not be properly represented.
 plot_ring_spread = false;            % Flag for plotting the ring locations
 
-num_rings = 3;                     % Num of rings of the DRESG deployment (a.k.a R)
-child_ratio = 4;                    % Num of children of STAs not belonging to the last ring
+num_rings = 5;                     % Num of rings of the DRESG deployment (a.k.a R)
+child_ratio = 5;                    % Num of children of STAs not belonging to the last ring
 spread_model = RING_SPREAD_MODEL_EQUIDISTANT;   % Equidistant, fibonacci or reverse fibonnaci
 transceiver_model = TRANSCEIVER_MODEL_CC1200;   % Transceiver model
 
