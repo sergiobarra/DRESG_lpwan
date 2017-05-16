@@ -1,6 +1,7 @@
 function [action_history, reward_per_arm, statistics ] = ... 
         learn_optimal_routing( max_num_iterations, set_of_ring_hops_combinations, d_ring, aggregation_on,...
-        epsilon_initial, epsilon_tunning_mode, optimal_action )
+        epsilon_initial, epsilon_tunning_mode, optimal_action, similarity_on, epsilon_b_initial, epsilon_b_tunning_mode,...
+        similarity_matrix)
     %LEARN_OPTIMAL_ROUTING applies learning for identfying an optimal (or
     %pseudo-optimal) ring hops combination
     %   Detailed explanation goes here
@@ -17,19 +18,25 @@ function [action_history, reward_per_arm, statistics ] = ...
 
     action_history = []; % Array of structures containning the action history and corresponding energy values
     reward_per_arm = ones(1,num_possible_arms) .* -1;
-    % statistics = struct([]);
+
     iteration_optimal_action = 0;   % Iteration where optimal action was found
     iteration_all_actions_explored = 0;   % Iteration where optimal action was found
     
     %disp(['    - learning optimal routing for epsilon ' num2str(epsilon_initial) ' and mode ' num2str(epsilon_tunning_mode)])
     epsilon = epsilon_initial;
+    epsilon_b = epsilon_b_initial;
+    
     iteration = 1;
+    
+    
+    
     while(iteration <= max_num_iterations) 
         
         %disp(['- iteration ' num2str(iteration)])
 
         % Pick a ring hops combination (i.e., arm)
-        selected_arm = select_action_greedy(reward_per_arm, epsilon);
+        [selected_arm, epsilon_b] = select_action_greedy(reward_per_arm, epsilon, similarity_on, similarity_matrix,...
+            epsilon_b, epsilon_b_tunning_mode, iteration);
         
         if selected_arm == optimal_action && iteration_optimal_action == 0
             iteration_optimal_action = iteration;
@@ -39,7 +46,7 @@ function [action_history, reward_per_arm, statistics ] = ...
                 
         [e, btle_e, btle_ix, ~, ~, ~] = general_optimal_tx_conf(ring_hops_combination, aggregation_on, d_ring);
         
-        % disp(['  · selected_arm: ' num2str(selected_arm) ' (' num2str(btle_e) ' mJ)'])
+        %disp(['      * selected_arm: ' num2str(selected_arm) ' (' num2str(btle_e) ' mJ)'])
 
         reward = 1/btle_e;
         reward_per_arm(selected_arm) = reward;
@@ -78,7 +85,7 @@ function [action_history, reward_per_arm, statistics ] = ...
         end
      
         if mod(iteration, max_num_iterations/10) == 0
-            %disp(['      · progress: ' num2str(floor(iteration*100 / max_num_iterations)) '%'])
+            %disp(['      ? progress: ' num2str(floor(iteration*100 / max_num_iterations)) '%'])
         end
         
         % Increase the number of 'learning iterations' of a WLAN
