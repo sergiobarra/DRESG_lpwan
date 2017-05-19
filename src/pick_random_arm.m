@@ -1,10 +1,16 @@
+%%% "Distance-Ring Exponential Stations Generator (DRESG) for LPWANs"
+%%% - Learning extension
+%%% Author: Sergio Barrachina (sergio.barrachina@upf.edu)
+%%%
+%%% File description: Main script for running routing-efficient learning algorithms
+
 function [ picked_arm ] = pick_random_arm( reward_per_arm, only_unknown )
-    %PICK_RANDOM_ARM Summary of this function goes here
+    %PICK_RANDOM_ARM function for picking s
     %   Detailed explanation goes here
     
-    [reward, picked_arm] = datasample(reward_per_arm, 1);   % Sample uniformely at random
+    [~, picked_arm] = datasample(reward_per_arm, 1);   % Sample uniformely at random
     
-    % OPTIMIZATION NEEDED FOR LARGER COMBINATIONS!
+    % Note: TODO optimization needed for large sets of hop combinations
     if only_unknown
         unkown_elements = find(reward_per_arm == -1);
         if ~isempty(unkown_elements)

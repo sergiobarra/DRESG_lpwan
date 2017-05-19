@@ -1,32 +1,42 @@
-%% Load workspace if necessary
+%%% "Distance-Ring Exponential Stations Generator (DRESG) for LPWANs"
+%%% - Learning extension
+%%% Author: Sergio Barrachina (sergio.barrachina@upf.edu)
+%%%
+%%% File description: script for displaying and plotting results
+
 close all
 
-save_figures = false;
-save_info = false;
-load_mat = true;
+%% CONFIGURATION
 
-mat_filename = 'results/r4_c8_i500_t1000/r4_c8_i500_t1000_linear_decreasing.mat';
-output_root_filename = 'results/r5_c5_i8000_t1000/';
+save_figures = false;   % Flag for saving the generated figures
+save_info = false;      % Flag for writting general info into a file
+load_mat = false;        % Flag for loading a '.mat' file into the workspace
 
+
+% output_root_filename = 'results/r5_c5_i8000_t1000/';
+
+% Load workspace if necessary
 % Load just the required variables (avoid loading variables with high memory size)
 if load_mat
     
-%     load(mat_filename,'epsilon_initial','num_explored_actions_constant_mean','num_possible_actions',...
-%         'num_unexplored_actions_constant_mean','mean_iteration_optimal_constant','mean_iteration_all_constant',...
-%         'num_explored_actions_decreasing_mean', 'num_unexplored_actions_decreasing_mean',...
-%         'mean_iteration_optimal_decreasing', 'mean_iteration_all_decreasing','num_epsilons',...
-%         'max_cum_mean_rings_e_constant','max_cum_mean_rings_e_decreasing','num_rings','child_ratio',...
-%         'mean_btle_e_constant', 'mean_btle_e_decreasing','num_iterations','statistics_constant','statistics_decreasing',...
-%         'num_trials','times_all_explored_constant','times_all_explored_decreasing','times_optimal_explored_decreasing',...
-%         'times_optimal_explored_constant', 'max_cum_max_ring_e_constant', 'max_cum_max_ring_e_decreasing',...
-%         'max_cum_mean_rings_e_constant_similarity', 'max_cum_mean_rings_e_decreasing_similarity',...
-%         'mean_btle_e_constant_similarity', 'mean_btle_e_decreasing_similarity', 'sqz_std_matrix_rings_e_constant',...
-%         'sqz_std_matrix_rings_e_decreasing')
+    mat_filename = 'r7_c3_i12000_t1000_linear_decreasing_epsilon.mat';
     
-    load(mat_filename)
+    load(mat_filename,'epsilon_initial','num_explored_actions_constant_mean','num_possible_actions',...
+        'num_unexplored_actions_constant_mean','mean_iteration_optimal_constant','mean_iteration_all_constant',...
+        'num_explored_actions_decreasing_mean', 'num_unexplored_actions_decreasing_mean',...
+        'mean_iteration_optimal_decreasing', 'mean_iteration_all_decreasing','num_epsilons',...
+        'max_cum_mean_rings_e_constant','max_cum_mean_rings_e_decreasing','num_rings','child_ratio',...
+        'mean_btle_e_constant', 'mean_btle_e_decreasing','num_iterations','statistics_constant','statistics_decreasing',...
+        'num_trials','times_all_explored_constant','times_all_explored_decreasing','times_optimal_explored_decreasing',...
+        'times_optimal_explored_constant', 'max_cum_max_ring_e_constant', 'max_cum_max_ring_e_decreasing',...
+        'max_cum_mean_rings_e_constant_similarity', 'max_cum_mean_rings_e_decreasing_similarity',...
+        'mean_btle_e_constant_similarity', 'mean_btle_e_decreasing_similarity', 'sqz_std_matrix_rings_e_constant',...
+        'sqz_std_matrix_rings_e_decreasing')
+    
+    % load(mat_filename)
 end
 
-%% Display results and plots
+%% DIPLAY GENERAL INFO
 
 disp(' ')
 % Display some parameters per console
@@ -101,7 +111,7 @@ if save_info
     end
 end
 
-%% PLOTS
+%% GENERATE PLOTS
 
 for epsilon_ix = 1:length(epsilon_initial)
     legend_constant{epsilon_ix} = strcat('\epsilon_{cnt}: ', num2str(epsilon_initial(epsilon_ix)));
@@ -122,7 +132,7 @@ for epsilon_ix = 1:length(epsilon_initial)
     
 end
 
-% Consumption
+% Mean cummulated consumption of the historic bottleneck
 figure
 hold on
 for epsilon_ix = 1:num_epsilons
@@ -235,7 +245,7 @@ legend(legend_both_epsilons);
 % filename_aux = strcat('r',num2str(num_rings),'c',num2str(child_ratio),'_1.fig');
 % savefig(filename_aux)
 
-% Bottleneck energy
+% Mean bottleneck consumption
 figure
 hold on
 for epsilon_ix = 1:num_epsilons
@@ -321,18 +331,18 @@ legend(legend_both_epsilons);
 %     savefig(filename_aux)
 % end
 % 
-figure
-hold on
-for epsilon_ix = 1:num_epsilons
-    plot(max_cum_max_ring_e_constant(epsilon_ix,:))
-end
-for epsilon_ix = 1:num_epsilons
-    plot(max_cum_max_ring_e_decreasing(epsilon_ix,:))
-end
-title('Max cummulated energy per ring')
-xlabel('time [iterations]')
-ylabel('e [mJ]')
-legend(legend_both_epsilons);
+% figure
+% hold on
+% for epsilon_ix = 1:num_epsilons
+%     plot(max_cum_max_ring_e_constant(epsilon_ix,:))
+% end
+% for epsilon_ix = 1:num_epsilons
+%     plot(max_cum_max_ring_e_decreasing(epsilon_ix,:))
+% end
+% title('Max cummulated energy per ring')
+% xlabel('time [iterations]')
+% ylabel('e [mJ]')
+% legend(legend_both_epsilons);
 
 % figure
 % hold on
@@ -350,39 +360,30 @@ legend(legend_both_epsilons);
 
 % -----------------
 
-%% Variance + CDF figure
-% % close all
-% figure
-% subplot(1,2,1)
-% hold on
-% for epsilon_ix = 1:num_epsilons
-%     plot(sqz_std_matrix_rings_e_constant(:,epsilon_ix)./1000)   % J
-% end
-% for epsilon_ix = 1:num_epsilons
-%     plot(sqz_std_matrix_rings_e_decreasing(:,epsilon_ix)./1000) % J
-% end
-% xlabel('time [iterations]')
-% ylabel('\sigma [J]')
-% legend(legend_both_epsilons);
-% grid on
-% 
-% subplot(1,2,2)
-% hold on
-% for epsilon_ix = 1:num_epsilons
-%     cdfplot(([statistics_constant(:, epsilon_ix).iteration_optimal]));
-% end
-% for epsilon_ix = 1:num_epsilons
-%     cdfplot(([statistics_decreasing(:, epsilon_ix).iteration_optimal]));
-% end
-% xlabel('time [iterations]')
-% ylabel('CDF(i_{opt})')
-% legend(legend_both_epsilons);
-% grid on
+% Variance + CDF figure
+figure
+subplot(1,2,1)
+hold on
+for epsilon_ix = 1:num_epsilons
+    plot(sqz_std_matrix_rings_e_constant(:,epsilon_ix)./1000)   % J
+end
+for epsilon_ix = 1:num_epsilons
+    plot(sqz_std_matrix_rings_e_decreasing(:,epsilon_ix)./1000) % J
+end
+xlabel('time [iterations]')
+ylabel('\sigma [J]')
+legend(legend_both_epsilons);
+grid on
 
-
-%% Btle, Mean cum, Max cum
-
-
-
-
-
+subplot(1,2,2)
+hold on
+for epsilon_ix = 1:num_epsilons
+    cdfplot(([statistics_constant(:, epsilon_ix).iteration_optimal]));
+end
+for epsilon_ix = 1:num_epsilons
+    cdfplot(([statistics_decreasing(:, epsilon_ix).iteration_optimal]));
+end
+xlabel('time [iterations]')
+ylabel('CDF(i_{opt})')
+legend(legend_both_epsilons);
+grid on

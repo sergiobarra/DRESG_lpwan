@@ -1,3 +1,10 @@
+%%% "Distance-Ring Exponential Stations Generator (DRESG) for LPWANs"
+%%% - Learning extension
+%%% Author: Sergio Barrachina (sergio.barrachina@upf.edu)
+%%%
+%%% File description: script for generating the similarity matrix given the
+%%% set of hops combination (Delta)
+
 load('configuration.mat')
 
 disp('Computing action similarity matrix (be patient my friend)...')

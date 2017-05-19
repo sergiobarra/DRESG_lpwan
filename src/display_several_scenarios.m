@@ -1,3 +1,8 @@
+%%% "Distance-Ring Exponential Stations Generator (DRESG) for LPWANs"
+%%% Author: Sergio Barrachina (sergio.barrachina@upf.edu)
+%%%
+%%% File description: specific plots and subplots
+
 % close all
 % 
 % % Load saved figures

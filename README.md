@@ -13,6 +13,9 @@ Just [Matlab](https://www.mathworks.com/) is required.
  * Set the scenario configuration and DRESG deployment in file "set_configuration.m". 
  * Run main file "main_analysis.m" to display the analysis results.
 
+### Learning ptimal-hop routing extension
+A code extension for running epsilon-greedy algorithms devoted to face the exploration/exploitation dilemma of finding the optimal-hop routings is now available.
+ 
 ### Support
 You can contact me for any issue you may have when using DRESG.
 
