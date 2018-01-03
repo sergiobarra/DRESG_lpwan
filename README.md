@@ -1,3 +1,5 @@
+![alt text](https://github.com/sergiobarra/DRESG_lpwan/blob/master/dresg_logo.PNG)
+
 # DRESG framework for LPWANs
 
 The Distance-Ring Exponential Stations Generator (DRESG) allows analyzing the impact on LPWANs energy consumption of multi-hop communication in the uplink. By letting STAs to transmit data packets in lower power levels and higher data rates to closer parent STAs, they normally reduce their energy consumption consequently.
@@ -10,8 +12,8 @@ Just [Matlab](https://www.mathworks.com/) is required.
 
 ### Usage
  
- * Set the scenario configuration and DRESG deployment in file "set_configuration.m". 
- * Run main file "main_analysis.m" to display the analysis results.
+ * Set the scenario configuration and DRESG deployment in file ```set_configuration.m```. 
+ * Run main file ```main_analysis.m``` to display the analysis results.
 
 ### Learning optimal-hop routing extension
 A code extension for running epsilon-greedy algorithms devoted to face the exploration/exploitation dilemma of finding the optimal-hop routings is now available. An application of such extension can be found in *[Barrachina-Muñoz, Sergio, and Boris Bellalta. "Learning Optimal Routing for the Uplink in LPWANs Using Similarity-enhanced epsilon-greedy." arXiv preprint arXiv:1705.08304 (2017)](https://arxiv.org/pdf/1705.08304.pdf)*.
