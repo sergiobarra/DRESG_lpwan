@@ -1,4 +1,6 @@
-![alt text](https://github.com/sergiobarra/DRESG_lpwan/blob/master/dresg_logo.PNG)
+<p align="center">
+  <img src="https://github.com/sergiobarra/DRESG_lpwan/blob/master/dresg_logo.PNG" width="400" height="100">
+</p>
 
 # DRESG framework for LPWANs
 
